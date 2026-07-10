@@ -4,7 +4,7 @@
 
 Fiber splits authoring from rendering. FBT and FBTL are builders that both emit the same Flow JSON; FBRE renders it. Docs also ship inside each npm package under `node_modules/<package>/docs/`, version-matched to the installed code.
 
-## Start here
+## Core concepts
 
 - [Fiber Concepts](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/fiber-concepts.md): First contact with Fiber: the Flow/Screen/Component model, FlowData, builders vs render engine, conditions/validation/calculations concepts.
 
