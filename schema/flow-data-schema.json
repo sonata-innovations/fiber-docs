@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/schema/flow-data-schema.json",
+  "title": "Fiber FlowData",
+  "description": "Schema for FlowData JSON — the output structure produced by FBRE (render engine) when a form is completed.",
+  "type": "object",
+  "required": ["uuid", "metadata", "screens"],
+  "additionalProperties": false,
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "description": "UUID of the flow this submission belongs to."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata from the original flow, passed through as-is.",
+      "additionalProperties": { "type": "string" }
+    },
+    "screens": {
+      "type": "array",
+      "description": "Ordered list of screens that were visible at completion time.",
+      "items": { "$ref": "#/$defs/ScreenData" }
+    },
+    "calculations": {
+      "type": "array",
+      "description": "Evaluated calculation results. Present only when the flow defines calculations.",
+      "items": { "$ref": "#/$defs/CalculationData" }
+    }
+  },
+
+  "$defs": {
+    "ScreenData": {
+      "type": "object",
+      "description": "Submitted data for a single screen.",
+      "required": ["uuid", "components"],
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "UUID of the screen."
+        },
+        "label": {
+          "type": "string",
+          "description": "Screen label. Present only when the screen has a non-empty label."
+        },
+        "components": {
+          "type": "array",
+          "description": "Submitted data for each data-bearing component on this screen.",
+          "items": { "$ref": "#/$defs/ComponentData" }
+        }
+      }
+    },
+
+    "ComponentData": {
+      "type": "object",
+      "description": "Submitted data for a single component. The 'value' key is absent on container entries (group, repeater) and on a confirm that was ticked then unticked.",
+      "required": ["uuid", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "UUID of the component."
+        },
+        "label": {
+          "type": "string",
+          "description": "Component label. Present only when the component has a non-empty label."
+        },
+        "type": {
+          "type": "string",
+          "description": "Component type key. Display-only types (header, text, divider, callout, table) are never present in FlowData.",
+          "enum": [
+            "inputText",
+            "inputTextArea",
+            "inputNumber",
+            "dropDown",
+            "dropDownMulti",
+            "checkbox",
+            "radio",
+            "rating",
+            "slider",
+            "toggleSwitch",
+            "fileUpload",
+            "group",
+            "date",
+            "time",
+            "dateTime",
+            "dateRange",
+            "timeRange",
+            "dateTimeRange",
+            "yesNo",
+            "confirm",
+            "colorPicker",
+            "cardSelect",
+            "signature",
+            "computed",
+            "repeater"
+          ]
+        },
+        "value": {
+          "description": "The collected value. Type varies by component — see documentation for per-type details. Absent on containers (group, repeater) and on an unticked confirm.",
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" },
+            { "type": "boolean" },
+            { "type": "null" },
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            {
+              "type": "array",
+              "items": { "type": "number" }
+            },
+            { "$ref": "#/$defs/FileUploadData" },
+            { "$ref": "#/$defs/RangeValue" }
+          ]
+        },
+        "components": {
+          "type": "array",
+          "description": "Container iterations. Present on group and repeater components. Outer array = iterations (a group has exactly one; a repeater has one per iteration), inner array = child components per iteration.",
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/ComponentData" }
+          }
+        }
+      }
+    },
+
+    "FileUploadData": {
+      "description": "Uploaded file data. Discriminated union on the 'mode' field.",
+      "oneOf": [
+        { "$ref": "#/$defs/FileUploadBase64Data" },
+        { "$ref": "#/$defs/FileUploadS3Data" }
+      ]
+    },
+
+    "FileUploadBase64Data": {
+      "type": "object",
+      "description": "File uploaded as inline Base64 data. This is the default mode when no server-side storage is configured. FBRE emits this shape without a 'mode' field; the optional 'lastModifiedDate' passes through the deprecated File API property only when the browser provides it.",
+      "required": [
+        "name",
+        "type",
+        "size",
+        "lastModified",
+        "data"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "description": "Optional discriminant allowed by the TypeScript type. Never emitted by FBRE.",
+          "const": "base64"
+        },
+        "name": {
+          "type": "string",
+          "description": "Original file name."
+        },
+        "type": {
+          "type": "string",
+          "description": "MIME type of the file (e.g. 'application/pdf', 'image/png')."
+        },
+        "size": {
+          "type": "number",
+          "description": "File size in bytes."
+        },
+        "lastModified": {
+          "type": "number",
+          "description": "Last modified timestamp (Unix milliseconds)."
+        },
+        "lastModifiedDate": {
+          "type": "string",
+          "description": "Deprecated File API 'lastModifiedDate' value, present only when the browser provides it."
+        },
+        "data": {
+          "type": "string",
+          "description": "Base64-encoded file content (data URL format)."
+        }
+      }
+    },
+
+    "FileUploadS3Data": {
+      "type": "object",
+      "description": "File uploaded to S3 or compatible object storage. Contains a reference to the stored file rather than inline data.",
+      "required": ["mode", "fileId", "name", "type", "size"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "description": "Upload mode. Always 's3' for server-stored files.",
+          "const": "s3"
+        },
+        "fileId": {
+          "type": "string",
+          "description": "Server-assigned file identifier for retrieval."
+        },
+        "name": {
+          "type": "string",
+          "description": "Original file name."
+        },
+        "type": {
+          "type": "string",
+          "description": "MIME type of the file."
+        },
+        "size": {
+          "type": "number",
+          "description": "File size in bytes."
+        }
+      }
+    },
+
+    "CalculationData": {
+      "type": "object",
+      "description": "Evaluated result of a flow-level calculation.",
+      "required": ["uuid", "label", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "UUID of the calculation."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label for the calculation."
+        },
+        "value": {
+          "description": "Numeric result of the calculation, or null if the formula could not be evaluated.",
+          "oneOf": [
+            { "type": "number" },
+            { "type": "null" }
+          ]
+        },
+        "formattedValue": {
+          "type": "string",
+          "description": "Pre-formatted display string (e.g. \"$1,234.56\", \"75.00%\"). Omitted when value is null."
+        }
+      }
+    },
+
+    "RangeValue": {
+      "type": "object",
+      "description": "A start/end pair used by range components (dateRange, timeRange, dateTimeRange).",
+      "required": ["start", "end"],
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "type": "string",
+          "description": "Start value. Format depends on component type (date, time, or datetime)."
+        },
+        "end": {
+          "type": "string",
+          "description": "End value. Same format as start."
+        }
+      }
+    }
+  }
+}

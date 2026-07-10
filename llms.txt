@@ -1,0 +1,34 @@
+# Fiber
+
+> Fiber is a system for building and rendering data-collection forms. Builders (FBT, FBTL) author a JSON document called a Flow; the render engine (FBRE) renders it and returns collected data (FlowData). All libraries are standard React components published on npm.
+
+Fiber splits authoring from rendering. FBT and FBTL are builders that both emit the same Flow JSON; FBRE renders it. Docs also ship inside each npm package under `node_modules/<package>/docs/`, version-matched to the installed code.
+
+## Start here
+
+- [Fiber Concepts](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/fiber-concepts.md): First contact with Fiber: the Flow/Screen/Component model, FlowData, builders vs render engine, conditions/validation/calculations concepts.
+
+## Integration guides
+
+- [FBRE Integration Guide](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/integration/fbre.md): Embedding the render engine in a parent app: props and modes, onFlowComplete contract, confirmation screen, store access, events, theming, pre-populating data.
+- [FBT Integration Guide](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/integration/fbt.md): Embedding the full builder in a parent app: getting the Flow out, composable layout, custom presets and templates.
+- [FBTL Integration Guide](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/integration/fbtl.md): Embedding the lite builder in a parent app: controlled-component contract, scope, save lifecycle, normalizing generator-authored flows.
+- [Theme Editor Integration Guide](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/integration/theme-editor.md): Embedding the plug-and-play theming widget: controlled value contract, knob sets, defaults, modal pattern, passing the theme to FBRE/FBT/FBTL.
+
+## Schema reference
+
+- [FlowData Schema](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/schema/flow-data-schema.md): Consuming FlowData output from FBRE: structure, per-type value shapes, exclusion rules, containers, calculations.
+- [Flow JSON Quick Reference](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/schema/flow-quick-reference.md): Constructing or interpreting Flow JSON: structure, component types and value types, options, conditions, validation, widths, inline markup. For exhaustive per-property detail, use flow-schema.md instead.
+- [Flow JSON Schema Reference](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/schema/flow-schema.md): Exhaustive per-property reference for Flow JSON: every component type, property, condition, validation rule, calculation, and config field. For a compact overview use flow-quick-reference.md.
+
+## Feature guides
+
+- [Confirmation ("Thank You") Screen](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/features/confirmation-screen.md): Configuring the post-submit thank-you screen: config.confirmation, dynamic ${...} content, and the onFlowComplete return contract.
+- [Custom Presets & Templates (FBT)](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/features/custom-presets-and-templates.md): Extending FBT's pool with custom presets/templates: data-based vs factory definitions, icon catalog, collision rules, server-stored definitions.
+- [FBRE Theming Guide](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/features/fbre-theming.md): Theming FBRE-rendered forms: colorScheme presets, palette knobs, raw --fbre-* token overrides, precedence model, full token catalog.
+
+## Optional
+
+- [Full documentation, concatenated](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/llms-full.txt): every document above in a single file
+- [Flow JSON Schema](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/schema/flow-schema.json): machine-validatable, draft 2020-12
+- [FlowData JSON Schema](https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/schema/flow-data-schema.json): machine-validatable, draft 2020-12

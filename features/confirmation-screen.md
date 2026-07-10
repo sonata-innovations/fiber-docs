@@ -1,0 +1,124 @@
+---
+title: Confirmation ("Thank You") Screen
+applies-to:
+  - "@sonata-innovations/fiber-fbre@^3.3"
+  - "@sonata-innovations/fiber-fbt@^2.2"
+read-when: "Configuring the post-submit thank-you screen: config.confirmation, dynamic ${...} content, and the onFlowComplete return contract."
+---
+
+<!-- Spec: consumed by FBRE (fbre/src/ui/confirmation), FBT (editor-settings), fiber-types (ConfirmationConfig) -->
+
+# Confirmation ("Thank You") Screen
+
+A terminal screen shown **after** a form is submitted — a centered, formatted thank-you message. It is a flow-level setting, **not** a data-collection screen, so it never appears in the FBT/FBTL stage editor and never collects input.
+
+- **Where it lives:** `flow.config.confirmation` (a serializable config group, alongside `theme` / `navigation` / `controls` / `summary`).
+- **When it shows:** once the flow is submitted and `onFlowComplete` settles.
+- **What it renders:** `title` + `body`, centered, with the controls and stepper hidden.
+
+## Quick start
+
+```ts
+const flow = {
+  ...myFlow,
+  config: {
+    ...myFlow.config,
+    confirmation: {
+      show: true,
+      title: "Thank you!",
+      body: "Your response has been submitted.",
+    },
+  },
+};
+
+<FBRE flow={flow} onFlowComplete={handleComplete} />;
+```
+
+It renders **only** when `show` is not `false` **and** `title` or `body` has content. There is no built-in default copy — an enabled-but-empty confirmation shows nothing and the flow behaves as before.
+
+### `ConfirmationConfig`
+
+| Field   | Type      | Description                                                     |
+| ------- | --------- | -------------------------------------------------------------- |
+| `show`  | `boolean` | Explicit off-switch. Content presence is the positive gate.    |
+| `title` | `string`  | Heading. Supports `${...}` references and text formatting.     |
+| `body`  | `string`  | Message. Supports `${...}` references and text formatting.     |
+
+## Dynamic content
+
+`title` and `body` run through the same `${...}` reference markup as `text` / `header` / `callout` components. References resolve, in order, against:
+
+1. **Calculations** — `${<calculationUuid>}`
+2. **Collected field values** — `${<componentUuid>}` (what the user just entered)
+3. **External context** — `${<contextKey>}` (values the parent passed via the `context` prop, by name)
+
+```ts
+// config.confirmation.body — mixes a collected field and a context value
+"Thanks ${q_name}! A copy is on its way to ${q_email}. Our team at ${support_email} will follow up.";
+```
+
+```tsx
+// q_name / q_email are component UUIDs; support_email comes from context
+<FBRE flow={flow} context={{ support_email: "support@acme.com" }} onFlowComplete={handleComplete} />
+```
+
+> In FBT, the reference picker inserts field/calculation UUIDs for you. Context keys aren't in the picker yet — type `${key}` by hand for those. Resolved values are HTML-escaped (safe against injection).
+
+## Deciding *when* it shows: the `onFlowComplete` contract
+
+The confirmation appears when `onFlowComplete` settles. Its return value drives the behavior:
+
+```ts
+onFlowComplete: (data: FlowData) =>
+  void | ConfirmationResult | Promise<void | ConfirmationResult>;
+```
+
+| You return… | What happens |
+| --- | --- |
+| `void` | Confirmation shows immediately (optimistic). |
+| `Promise<void>` | Submit button stays in its **in-flight / loading** state until the promise settles. Resolve → confirmation shows. **Reject → a completion error renders and the confirmation is _not_ shown.** |
+| `ConfirmationResult` (`{ title?, body? }`), synchronously or as the resolved value of a Promise | **Overrides** the configured message. Use for content only known after submit — e.g. a server reference number. |
+
+### Wait for the backend, then confirm with its reference number
+
+```tsx
+import type { FlowData, ConfirmationResult } from "@sonata-innovations/fiber-fbre";
+
+const handleComplete = async (data: FlowData): Promise<ConfirmationResult> => {
+  const { referenceId } = await saveToBackend(data); // rejects → FBRE shows the error, no confirmation
+  return { title: "All done!", body: `Your reference number is ${referenceId}.` };
+};
+
+<FBRE flow={flow} onFlowComplete={handleComplete} />;
+```
+
+If you don't need a runtime override, just author the message in `config.confirmation` and return `void` (or a `Promise<void>` to get the in-flight state while your save runs).
+
+## Authoring in FBT
+
+Open **Flow Settings → Confirmation Screen**, toggle it on, and fill in the title and message. This writes `config.confirmation` — it is intentionally separate from the stage/question editor. The message fields accept `${...}` references.
+
+## FBTL
+
+FBTL doesn't edit this config, but it **carries it through untouched** on load and export. A flow authored with a confirmation in FBT (or by hand) keeps it when round-tripped through FBTL, and FBTL's live FBRE preview renders it.
+
+## Try it
+
+FBRE playground → **Confirmation Demo** fixture:
+
+```bash
+cd fbre && npm run dev:playground
+```
+
+Fill in name + email and submit: the demo simulates a ~1.2s server round-trip (showing the in-flight submit state), then renders the confirmation with the field values and a context value interpolated in.
+
+## Exports & schema
+
+- Types: `ConfirmationConfig`, `ConfirmationResult` — exported from `@sonata-innovations/fiber-fbre` (and `@sonata-innovations/fiber-types`).
+- Schema: [`flow-schema.md` → ConfirmationConfig](../schema/flow-schema.md#confirmationconfig).
+- Integration reference: [FBRE Integration Guide → Confirmation Screen](../integration/fbre.md#confirmation-screen).
+
+## Edge cases
+
+- A non-empty `ConfirmationResult` returned from `onFlowComplete` forces the confirmation to render even when `config.confirmation.show` is `false` (the override path bypasses the config gate). An empty object (`{}`) is ignored and does not count as an override.
+- The confirmation screen exists only in local and remote modes. In **server-driven mode** it is not rendered — the parent should present its own terminal state from `onFlowComplete`.

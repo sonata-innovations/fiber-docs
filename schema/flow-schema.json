@@ -1,0 +1,829 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/sonata-innovations/fiber-docs/main/schema/flow-schema.json",
+  "title": "Fiber Flow",
+  "description": "Schema for Fiber Flow JSON — the format consumed by FBT (builder) and FBRE (render engine). As of @sonata-innovations/fiber-types v2, the TS-side Component is a discriminated union keyed on `type`; the on-disk JSON is unchanged.",
+  "type": "object",
+  "required": ["uuid", "metadata", "screens"],
+  "additionalProperties": false,
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "description": "Unique identifier for the flow."
+    },
+    "metadata": { "$ref": "#/$defs/FlowMetadata" },
+    "config": { "$ref": "#/$defs/FlowConfiguration" },
+    "screens": {
+      "type": "array",
+      "description": "Ordered list of screens in the flow.",
+      "items": { "$ref": "#/$defs/FlowScreen" }
+    },
+    "calculations": {
+      "type": "array",
+      "description": "Top-level calculations. Each defines a named formula that references component values, option metadata, or other calculations.",
+      "items": { "$ref": "#/$defs/FlowCalculation" }
+    }
+  },
+
+  "$defs": {
+    "FlowMetadata": {
+      "type": "object",
+      "description": "Descriptive metadata for the flow.",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+
+    "ThemeConfig": {
+      "type": "object",
+      "description": "Visual theme settings.",
+      "properties": {
+        "color": {
+          "type": "string",
+          "description": "Accent / primary color (--fbre-theme-color)."
+        },
+        "colorScheme": {
+          "type": "string",
+          "description": "Built-in palette preset that seeds the token layer. Default 'light'. Replaces the former 'darkMode' boolean (darkMode:true -> colorScheme:'dark').",
+          "enum": ["light", "dark"]
+        },
+        "background": {
+          "type": "string",
+          "description": "Page/form ground color (--fbre-bg)."
+        },
+        "surface": {
+          "type": "string",
+          "description": "Raised surface: input fills, cards, popups (--fbre-surface). Derives hover/alt/subtle surfaces and input fills."
+        },
+        "text": {
+          "type": "string",
+          "description": "Primary text color (--fbre-text). Derives secondary/placeholder/disabled/label."
+        },
+        "border": {
+          "type": "string",
+          "description": "Border/rule color (--fbre-border). Derives hover/light/subtle."
+        },
+        "radius": {
+          "type": "string",
+          "description": "Corner radius as a CSS length (--fbre-radius), e.g. '3px'."
+        },
+        "fontFamily": {
+          "type": "string",
+          "description": "Font family stack (--fbre-font)."
+        },
+        "error": {
+          "type": "string",
+          "description": "Error state color (--fbre-error)."
+        },
+        "success": {
+          "type": "string",
+          "description": "Success state color (--fbre-success)."
+        },
+        "warning": {
+          "type": "string",
+          "description": "Warning state color (--fbre-warning)."
+        },
+        "style": {
+          "type": "string",
+          "description": "Visual style for form elements. Standard mode styles: 'clean' = bottom-border inputs with uppercase labels (default). 'outlined' = full-border inputs with normal-case labels. 'refined-clean' = animated underline focus with left-accent groups. 'airy-clean' = spacious layout with tinted focus and pill buttons. 'soft-outlined' = full-border 8px radius with shadow-ring focus. 'defined-outlined' = filled-background inputs with top-accent groups. Conversational mode styles: 'centered-minimal' = thin underline inputs, bordered option cards, uppercase labels. 'stacked-cards' = filled background cards with left accent, keyboard shortcut badges. 'soft-float' = pill-shaped options with shadow lift on hover. 'bold-statement' = heavy borders, bold typography, inverted selection. Each style has a default stepper visual (see stepperStyle).",
+          "enum": ["clean", "outlined", "refined-clean", "airy-clean", "soft-outlined", "defined-outlined", "centered-minimal", "stacked-cards", "soft-float", "bold-statement"]
+        }
+      }
+    },
+
+    "NavigationConfig": {
+      "type": "object",
+      "description": "Screen navigation settings.",
+      "properties": {
+        "transition": {
+          "type": "string",
+          "description": "Screen transition animation type. Absent or 'none' means instant swap.",
+          "enum": ["none", "slide", "fade", "slideFade", "rise", "scaleFade"]
+        },
+        "allowInvalidTransition": {
+          "type": "boolean",
+          "description": "Allow navigating forward even when the screen has validation errors."
+        }
+      }
+    },
+
+    "ControlsConfig": {
+      "type": "object",
+      "description": "Navigation controls settings.",
+      "properties": {
+        "show": {
+          "type": "boolean",
+          "description": "Show built-in next/back navigation buttons. Default true."
+        },
+        "layout": {
+          "type": "string",
+          "description": "Layout for the navigation controls. 'default' = side-by-side grid (back-left / stepper-center / next-right); rows with a single visible button collapse to full-width. 'centered' = stepper on its own row above, buttons centered as a group below. 'inline-full' = stepper on its own row above, buttons side-by-side at 50% width each (or full-width solo). 'stacked' = stepper, then Back, then Next, stacked vertically at full-width.",
+          "enum": ["default", "centered", "inline-full", "stacked"]
+        },
+        "showStepper": {
+          "type": "boolean",
+          "description": "Show the step indicator dots in the controls bar. Default true."
+        },
+        "stepperStyle": {
+          "type": "string",
+          "description": "Style of the step indicator. 'default' = use the form style's default stepper. 'dots' = standard circles, scale on active. 'pill' = active dot stretches to pill shape. 'glow' = active dot gets a glow ring. 'bar' = track + counter (hides dots). 'text' = 'Step X of Y' text above screen content. Default 'default'.",
+          "enum": ["default", "dots", "pill", "glow", "bar", "text"]
+        }
+      }
+    },
+
+    "ConfirmationConfig": {
+      "type": "object",
+      "description": "Terminal 'thank you' / confirmation screen shown after the flow is submitted. Presentation-only, so it lives on the config rather than as a Screen. Renders only when 'show' is not false and 'title' or 'body' has content (or the parent supplies an override via the onFlowComplete return value).",
+      "properties": {
+        "show": {
+          "type": "boolean",
+          "description": "Explicit off-switch. Content presence is the positive gate."
+        },
+        "title": {
+          "type": "string",
+          "description": "Heading text. Supports ${...} reference markup and text formatting."
+        },
+        "body": {
+          "type": "string",
+          "description": "Body text. Supports ${...} reference markup and text formatting."
+        }
+      }
+    },
+
+    "FlowConfiguration": {
+      "type": "object",
+      "description": "Runtime configuration for the flow.",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "description": "Form presentation mode. 'standard' = multi-field screens (default). 'conversational' = one-question-per-screen, vertically centered, with auto-advance on selection, Enter-to-advance on text inputs, and animated component entry.",
+          "enum": ["standard", "conversational"]
+        },
+        "theme": { "$ref": "#/$defs/ThemeConfig" },
+        "navigation": { "$ref": "#/$defs/NavigationConfig" },
+        "controls": { "$ref": "#/$defs/ControlsConfig" },
+        "summary": {
+          "type": "boolean",
+          "description": "Show a summary screen before completion."
+        },
+        "confirmation": { "$ref": "#/$defs/ConfirmationConfig" }
+      }
+    },
+
+    "FlowScreen": {
+      "type": "object",
+      "description": "A single screen (page) in the flow.",
+      "required": ["uuid", "components"],
+      "additionalProperties": false,
+      "properties": {
+        "uuid": { "type": "string" },
+        "label": {
+          "type": "string",
+          "description": "Display label for the screen, shown in navigation."
+        },
+        "components": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Component" }
+        },
+        "conditions": { "$ref": "#/$defs/FlowConditionConfig" },
+        "nextButtonLabel": {
+          "type": "string",
+          "description": "Custom label for the Next/Done navigation button on this screen. Overrides the default text."
+        },
+        "backButtonLabel": {
+          "type": "string",
+          "description": "Custom label for the Back navigation button on this screen. Overrides the default text."
+        },
+        "valid": {
+          "type": "boolean",
+          "description": "Runtime validity state. Do not set in authored JSON."
+        }
+      }
+    },
+
+    "Component": {
+      "type": "object",
+      "description": "A single form component.",
+      "required": ["uuid", "type", "properties"],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "Unique identifier for the component."
+        },
+        "type": {
+          "type": "string",
+          "description": "Component type key. Acts as the discriminator on the TS-side Component union; narrowing on this value types `properties` to the matching Component*Properties variant.",
+          "enum": [
+            "header",
+            "text",
+            "divider",
+            "callout",
+            "table",
+            "inputText",
+            "inputTextArea",
+            "inputNumber",
+            "dropDown",
+            "dropDownMulti",
+            "checkbox",
+            "radio",
+            "rating",
+            "slider",
+            "toggleSwitch",
+            "fileUpload",
+            "group",
+            "date",
+            "time",
+            "dateTime",
+            "dateRange",
+            "timeRange",
+            "dateTimeRange",
+            "yesNo",
+            "confirm",
+            "colorPicker",
+            "cardSelect",
+            "repeater",
+            "computed",
+            "signature"
+          ]
+        },
+        "properties": {
+          "description": "Type-specific properties. JSON schema is the open ComponentProperties shape below; TypeScript narrows it per-type via the variant map in fiber-types/src/component-variants.ts.",
+          "$ref": "#/$defs/ComponentProperties"
+        },
+        "conditions": { "$ref": "#/$defs/FlowConditionConfig" },
+        "components": {
+          "type": "array",
+          "description": "Child component templates. Used by 'group' and 'repeater' types.",
+          "items": { "$ref": "#/$defs/Component" }
+        },
+        "value": {
+          "description": "Current value. Typically set at runtime, not in authored JSON."
+        },
+        "addedComponents": {
+          "type": "array",
+          "description": "Runtime group/repeater iterations. Do not set in authored JSON.",
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/Component" }
+          }
+        },
+        "valid": {
+          "type": "boolean",
+          "description": "Runtime validity state. Do not set in authored JSON."
+        },
+        "display": {
+          "type": "object",
+          "description": "Runtime display overrides. Do not set in authored JSON.",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ComponentProperties": {
+      "type": "object",
+      "description": "Properties vary by component type. Common fields documented here; type-specific fields below.",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Display label for the component."
+        },
+        "value": {
+          "type": "string",
+          "description": "Static content value (used by display components: header, text, divider)."
+        },
+        "displayType": {
+          "type": "boolean",
+          "description": "When true on a 'text' component, renders as display-only (no input)."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether the field must have a value to pass validation."
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder text shown when the field is empty."
+        },
+        "helperText": {
+          "type": "string",
+          "description": "Instructional text displayed below the field."
+        },
+        "tooltip": {
+          "type": "string",
+          "description": "Tooltip text shown on hover/focus of an info icon."
+        },
+        "detail": {
+          "type": "string",
+          "description": "Rich text displayed above the component. Supports markup ([b], [i], [l]). When set, hides the label unless showLabel is true."
+        },
+        "regex": {
+          "type": "string",
+          "description": "Regular expression pattern for input validation."
+        },
+        "maxlength": {
+          "type": "integer",
+          "description": "Maximum character length for text inputs."
+        },
+        "startAdornment": {
+          "type": "string",
+          "description": "Text or symbol displayed at the start of the input field (e.g. '$', '+1')."
+        },
+        "textAlign": {
+          "type": "string",
+          "description": "Text alignment for divider labels.",
+          "enum": ["left", "center", "right"]
+        },
+        "options": {
+          "type": "array",
+          "description": "Available choices for selection components (dropDown, dropDownMulti, checkbox, radio, cardSelect).",
+          "items": { "anyOf": [{ "$ref": "#/$defs/Option" }, { "$ref": "#/$defs/CardSelectOption" }] }
+        },
+        "min": {
+          "description": "Minimum value. Number for slider and inputNumber. String for date/time types: ISO date (YYYY-MM-DD), relative expression (today, today+7, today-3), or time (HH:MM). For inputNumber, sets the HTML min attribute and clamps value on blur.",
+          "oneOf": [{ "type": "number" }, { "type": "string" }]
+        },
+        "max": {
+          "description": "Maximum value. Number for slider/rating and inputNumber. String for date/time types: ISO date (YYYY-MM-DD), relative expression (today, today+7, today-3), or time (HH:MM). For inputNumber, sets the HTML max attribute and clamps value on blur.",
+          "oneOf": [{ "type": "number" }, { "type": "string" }]
+        },
+        "steps": {
+          "type": "number",
+          "description": "Step increment for slider."
+        },
+        "marks": {
+          "type": "boolean",
+          "description": "Show tick marks on slider."
+        },
+        "initValue": {
+          "type": "number",
+          "description": "Initial value for slider."
+        },
+        "precision": {
+          "type": "number",
+          "description": "Rating precision (e.g. 0.5 for half-stars, 1 for whole stars)."
+        },
+        "accept": {
+          "type": "string",
+          "description": "Comma-separated file extensions for fileUpload (e.g. '.pdf,.jpg,.png')."
+        },
+        "maxSize": {
+          "type": "integer",
+          "description": "Maximum file size in bytes for fileUpload."
+        },
+        "width": {
+          "type": "string",
+          "description": "Component width for flow-based layout. Components flow left-to-right and wrap naturally. Absent/undefined means full width.",
+          "enum": [
+            "full",
+            "half",
+            "third",
+            "two-thirds",
+            "quarter",
+            "three-quarters"
+          ]
+        },
+        "showLabel": {
+          "type": "boolean",
+          "description": "Show the component label even when detail text is set. For groups/repeaters, shows the label as a visible header."
+        },
+        "collapsible": {
+          "type": "boolean",
+          "description": "Allow the group or repeater to be collapsed/expanded."
+        },
+        "showBorder": {
+          "type": "boolean",
+          "description": "Draw the container border/frame around the group or repeater."
+        },
+        "minIterations": {
+          "type": "integer",
+          "description": "Minimum number of repeater iterations. Also determines initial row count when no initialData is provided. Default 1.",
+          "minimum": 1
+        },
+        "initialData": {
+          "type": "array",
+          "description": "Pre-populated data for repeater iterations. Each element is an object mapping template child UUIDs to initial values.",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "mode": {
+          "type": "string",
+          "description": "Signature component mode: draw (canvas), type (text in script font), or both (toggle).",
+          "enum": ["draw", "type", "both"]
+        },
+        "validation": {
+          "$ref": "#/$defs/FlowValidationConfig"
+        },
+        "inputType": {
+          "type": "string",
+          "description": "HTML input type hint for inputText. Controls mobile keyboard behavior and input masking.",
+          "enum": ["text", "email", "tel", "url", "password"]
+        },
+        "readOnly": {
+          "type": "boolean",
+          "description": "When true, the field is non-editable with a muted background. Applies to inputText, inputTextArea, inputNumber, dropDown, dropDownMulti, radio, checkbox, slider, date, time, and dateTime."
+        },
+        "autocomplete": {
+          "type": "string",
+          "description": "HTML autocomplete attribute value for browser autofill (e.g. 'email', 'tel', 'given-name'). Applies to inputText, inputTextArea, and inputNumber."
+        },
+        "showPasswordToggle": {
+          "type": "boolean",
+          "description": "When true and inputType is 'password', shows an eye icon to toggle password visibility. Applies to inputText."
+        },
+        "columns": {
+          "description": "For cardSelect: number of columns in the card grid (integer, default 2). For table: array of column definitions.",
+          "oneOf": [
+            { "type": "integer", "minimum": 1, "maximum": 4 },
+            { "type": "array", "items": { "$ref": "#/$defs/TableColumn" } }
+          ]
+        },
+        "placeholderStart": {
+          "type": "string",
+          "description": "Placeholder text for the start field in range components (dateRange, timeRange, dateTimeRange)."
+        },
+        "placeholderEnd": {
+          "type": "string",
+          "description": "Placeholder text for the end field in range components (dateRange, timeRange, dateTimeRange)."
+        },
+        "step": {
+          "type": "number",
+          "description": "Minute interval for time-related components (time, dateTime, timeRange, dateTimeRange). Default 15."
+        },
+        "dateFormat": {
+          "type": "string",
+          "description": "Display format for dates. Applies to date, dateTime, dateRange, dateTimeRange. Default MM/DD/YYYY.",
+          "enum": ["MM/DD/YYYY", "DD/MM/YYYY", "YYYY-MM-DD"]
+        },
+        "minTime": {
+          "type": "string",
+          "description": "Minimum allowed time (HH:MM, 24h) for dateTime and dateTimeRange. Enforced independently from min date."
+        },
+        "maxTime": {
+          "type": "string",
+          "description": "Maximum allowed time (HH:MM, 24h) for dateTime and dateTimeRange. Enforced independently from max date."
+        },
+        "swatches": {
+          "type": "array",
+          "description": "Preset color swatches for the colorPicker component.",
+          "items": { "type": "string" }
+        },
+        "defaultValue": {
+          "type": "string",
+          "description": "Pre-selected initial value. For colorPicker: hex color (e.g. '#FF0000'). For yesNo: 'yes' or 'no'. For radio, cardSelect, dropDown: the option value to pre-select. Ignored when no option matches; without it these components start at null (no default-to-first-option behavior)."
+        },
+        "labelYes": {
+          "type": "string",
+          "description": "Custom label for the 'Yes' button in yesNo component. Defaults to 'Yes'."
+        },
+        "labelNo": {
+          "type": "string",
+          "description": "Custom label for the 'No' button in yesNo component. Defaults to 'No'."
+        },
+        "layout": {
+          "type": "string",
+          "description": "Button layout direction for yesNo component. 'horizontal' keeps buttons side-by-side (even on small screens), 'vertical' stacks them. Defaults to responsive (horizontal on wide, vertical on narrow).",
+          "enum": ["horizontal", "vertical"]
+        },
+        "title": {
+          "type": "string",
+          "description": "Title text for the callout component, displayed as a bold header line."
+        },
+        "variant": {
+          "type": "string",
+          "description": "Visual variant for the callout component.",
+          "enum": ["info", "success", "warning", "neutral"]
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon key for the callout or rating component. Callout icons: info, check, warning, question, lightbulb, megaphone, bell, shield, lock, heart, flag, bookmark, zap, pencil, star, none. Rating icons: star, heart, thumbsUp, circle, diamond. Falls back to variant default (callout) or star (rating) if omitted."
+        },
+        "rows": {
+          "type": "array",
+          "description": "Table rows. Each row has a label and an array of cell values matching the columns.",
+          "items": { "$ref": "#/$defs/TableRow" }
+        },
+        "highlightColumn": {
+          "type": "integer",
+          "description": "1-based column number to visually highlight (0 = none).",
+          "minimum": 0
+        },
+        "formula": {
+          "type": "string",
+          "description": "Formula expression for computed components. References other fields via {uuid} syntax. Supports +, -, *, /, SUM(), COUNT(), AVG(), MIN(), MAX() (aggregation and scalar), IF(cond, then, else), comparison operators (>, <, >=, <=, ==, !=), and .selectedOption.metadata.key."
+        },
+        "format": {
+          "type": "string",
+          "description": "Display format for computed components and calculations.",
+          "enum": ["number", "currency", "percentage"]
+        },
+        "decimalPlaces": {
+          "type": "integer",
+          "description": "Number of decimal places (0-10). On inputNumber: restricts input via keystroke filtering; on computed/calculations: display precision.",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "currencySymbol": {
+          "type": "string",
+          "description": "Currency symbol prepended to value when format is 'currency'. Defaults to '$'."
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "FlowValidationConfig": {
+      "type": "object",
+      "description": "Validation configuration for a component. Contains an array of validation rules.",
+      "required": ["rules"],
+      "additionalProperties": false,
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "Ordered list of validation rules to evaluate.",
+          "items": { "$ref": "#/$defs/ValidationRule" }
+        }
+      }
+    },
+
+    "ValidationRule": {
+      "type": "object",
+      "description": "A single validation rule.",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The validation rule type.",
+          "enum": [
+            "required",
+            "email",
+            "phone",
+            "url",
+            "minLength",
+            "maxLength",
+            "exactLength",
+            "minValue",
+            "maxValue",
+            "pattern",
+            "minSelected",
+            "maxSelected",
+            "fileType",
+            "fileSize",
+            "contains",
+            "excludes",
+            "matchesField"
+          ]
+        },
+        "params": {
+          "type": "object",
+          "description": "Type-specific parameters (e.g. { min: 3 } for minLength, { regex: '...' } for pattern, { field: 'uuid' } for matchesField).",
+          "additionalProperties": true
+        },
+        "message": {
+          "type": "string",
+          "description": "Optional custom error message. When omitted, a default message is used."
+        }
+      }
+    },
+
+    "Option": {
+      "type": "object",
+      "description": "A selectable option for dropdown, radio, or checkbox components.",
+      "required": ["label", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Display text for the option."
+        },
+        "value": {
+          "description": "Value stored when the option is selected.",
+          "oneOf": [{ "type": "string" }, { "type": "number" }]
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional structured metadata for the option (e.g. price, weight, unit). Keys are strings; values are strings, numbers, or booleans. Consumed by the calculations engine.",
+          "additionalProperties": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" },
+              { "type": "boolean" }
+            ]
+          }
+        }
+      }
+    },
+
+    "FlowConditionConfig": {
+      "type": "object",
+      "description": "Condition configuration for conditionally showing or hiding a component or screen.",
+      "required": ["action", "when"],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "'show' = visible when condition is met; 'hide' = hidden when condition is met.",
+          "enum": ["show", "hide"]
+        },
+        "when": { "$ref": "#/$defs/ConditionGroup" }
+      }
+    },
+
+    "ConditionGroup": {
+      "type": "object",
+      "description": "A group of condition rules evaluated with AND or OR logic.",
+      "required": ["logic", "rules"],
+      "additionalProperties": false,
+      "properties": {
+        "logic": {
+          "type": "string",
+          "description": "'and' = all rules must match; 'or' = any rule matches.",
+          "enum": ["and", "or"]
+        },
+        "rules": {
+          "type": "array",
+          "description": "One or more condition rules to evaluate.",
+          "items": { "$ref": "#/$defs/ConditionRule" },
+          "minItems": 1
+        }
+      }
+    },
+
+    "CardSelectOption": {
+      "type": "object",
+      "description": "An option card for the cardSelect component.",
+      "required": ["label", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Display title for the card."
+        },
+        "value": {
+          "type": "string",
+          "description": "Value stored when this card is selected."
+        },
+        "description": {
+          "type": "string",
+          "description": "Short description text below the title."
+        },
+        "title": {
+          "type": "string",
+          "description": "Heading text displayed prominently on the card."
+        },
+        "features": {
+          "type": "array",
+          "description": "List of feature strings displayed as a checklist.",
+          "items": { "type": "string" }
+        },
+        "badge": {
+          "type": "string",
+          "description": "Badge text shown as a pill above the card (e.g. 'Popular')."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Arbitrary key-value pairs for calculations.",
+          "additionalProperties": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" },
+              { "type": "boolean" }
+            ]
+          }
+        }
+      }
+    },
+
+    "TableColumn": {
+      "type": "object",
+      "description": "A column definition for the table display component.",
+      "required": ["label"],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Column header text."
+        }
+      }
+    },
+
+    "TableRow": {
+      "type": "object",
+      "description": "A row definition for the table display component.",
+      "required": ["label", "values"],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Row header label shown in the first column."
+        },
+        "values": {
+          "type": "array",
+          "description": "Cell values for each column, in order.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "ConditionRule": {
+      "type": "object",
+      "description": "A single condition rule comparing a source component's value using an operator.",
+      "required": ["source", "operator"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "UUID of the source component whose value is tested, or a context key when sourceType is 'context'."
+        },
+        "sourceType": {
+          "type": "string",
+          "description": "Where to resolve the source value. 'component' (default) looks up a component UUID. 'context' looks up a key in FBRE's external context prop.",
+          "enum": ["component", "context"]
+        },
+        "operator": {
+          "type": "string",
+          "description": "The comparison operator to apply.",
+          "enum": [
+            "equals",
+            "notEquals",
+            "contains",
+            "notContains",
+            "startsWith",
+            "endsWith",
+            "isEmpty",
+            "isNotEmpty",
+            "greaterThan",
+            "greaterThanOrEqual",
+            "lessThan",
+            "lessThanOrEqual",
+            "isOneOf",
+            "isNotOneOf",
+            "includesAny",
+            "includesAll",
+            "includesNone",
+            "isTrue",
+            "isFalse"
+          ]
+        },
+        "value": {
+          "description": "Comparison value. Omitted for unary operators (isEmpty, isNotEmpty, isTrue, isFalse). Arrays for set operators (isOneOf, isNotOneOf, includesAny, includesAll, includesNone).",
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" },
+            { "type": "boolean" },
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            {
+              "type": "array",
+              "items": { "type": "number" }
+            }
+          ]
+        }
+      }
+    },
+
+    "CalculationFormat": {
+      "type": "string",
+      "description": "Display format for a calculation result.",
+      "enum": ["number", "currency", "percentage"]
+    },
+
+    "FlowCalculation": {
+      "type": "object",
+      "description": "A named formula that computes a value from component values, option metadata, and other calculations. Supports arithmetic (+, -, *, /), comparison operators (>, <, >=, <=, ==, !=), parentheses, field references ({uuid}), option metadata ({uuid}.selectedOption.metadata.key), aggregation functions (SUM, COUNT, AVG, MIN, MAX) over repeater iterations, scalar MIN/MAX with multiple arguments, and IF(condition, then, else) conditionals.",
+      "required": ["uuid", "label", "formula"],
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "Unique identifier for the calculation."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label displayed in the builder UI and available for reference markup."
+        },
+        "formula": {
+          "type": "string",
+          "description": "The formula expression. References use {uuid} syntax. Supports: arithmetic (+, -, *, /), parentheses, numeric literals, {uuid}.selectedOption.metadata.key for option metadata, SUM({uuid})/COUNT({uuid})/AVG({uuid}) for repeater aggregation."
+        },
+        "format": { "$ref": "#/$defs/CalculationFormat" },
+        "decimalPlaces": {
+          "type": "integer",
+          "description": "Number of decimal places for display formatting.",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "currencySymbol": {
+          "type": "string",
+          "description": "Currency symbol prepended to the result when format is 'currency'. Defaults to '$'."
+        }
+      }
+    }
+  }
+}
