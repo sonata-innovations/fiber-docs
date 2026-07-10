@@ -10,34 +10,75 @@ Render a form in about two minutes. Install the render engine:
 npm install @sonata-innovations/fiber-fbre
 ```
 
-A **Flow** is plain JSON — screens of components, each with a uuid, a type, and properties:
+A **Flow** is plain JSON — screens of components, each with a uuid, a type, and properties. Note the third field: it declares a *condition*, so it appears only when the answer above it is "yes". That logic lives in the document, not in your components.
 
-```ts
-const flow = {
-  uuid: "11111111-1111-4111-8111-111111111111",
-  metadata: { name: "Contact" },
-  screens: [
+```json
+{
+  "uuid": "flow-quickstart",
+  "metadata": {
+    "name": "Contact us"
+  },
+  "screens": [
     {
-      uuid: "22222222-2222-4222-8222-222222222222",
-      label: "About you",
-      components: [
+      "uuid": "screen-about-you",
+      "label": "About you",
+      "components": [
         {
-          uuid: "33333333-3333-4333-8333-333333333333",
-          type: "inputText",
-          properties: {
-            label: "Your name",
-            validation: { rules: [{ type: "required" }] },
+          "uuid": "comp-name",
+          "type": "inputText",
+          "properties": {
+            "label": "Your name",
+            "validation": {
+              "rules": [
+                {
+                  "type": "required"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "uuid": "comp-newsletter",
+          "type": "yesNo",
+          "properties": {
+            "label": "Subscribe to our newsletter?"
+          }
+        },
+        {
+          "uuid": "comp-email",
+          "type": "inputText",
+          "properties": {
+            "label": "Email address",
+            "inputType": "email",
+            "validation": {
+              "rules": [
+                {
+                  "type": "required"
+                },
+                {
+                  "type": "email"
+                }
+              ]
+            }
           },
-        },
-        {
-          uuid: "44444444-4444-4444-8444-444444444444",
-          type: "yesNo",
-          properties: { label: "Subscribe to updates?" },
-        },
-      ],
-    },
-  ],
-};
+          "conditions": {
+            "action": "show",
+            "when": {
+              "logic": "and",
+              "rules": [
+                {
+                  "source": "comp-newsletter",
+                  "operator": "equals",
+                  "value": "yes"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
 ```
 
 Hand it to `<FBRE />`. When the user finishes, you get the collected **FlowData** back:
@@ -45,13 +86,16 @@ Hand it to `<FBRE />`. When the user finishes, you get the collected **FlowData*
 ```tsx
 import { FBRE } from "@sonata-innovations/fiber-fbre";
 import "@sonata-innovations/fiber-fbre/styles"; // required — styles are not bundled with the JS
+import flow from "./quickstart.flow.json";
 
 export default function App() {
   return <FBRE flow={flow} onFlowComplete={(data) => console.log(data)} />;
 }
 ```
 
-That's the whole loop: **a Flow goes in, FlowData comes out.** Conditional logic, validation, and screen transitions are handled for you, declared in the JSON rather than written in your components.
+That's the whole loop: **a Flow goes in, FlowData comes out.** Conditional logic, validation, and screen transitions are handled for you — the email field is required and format-checked, and it is skipped entirely when hidden.
+
+This flow is [`examples/quickstart.flow.json`](examples/quickstart.flow.json), validated against the schema on every commit. See [all examples](examples/) for conditions, calculations, repeaters, file uploads, and theming.
 
 Next: [Fiber Concepts](fiber-concepts.md) for the mental model, or the [FBRE integration guide](integration/fbre.md) for the full API. To let people *author* flows instead of hand-writing JSON, add a builder — [FBT](integration/fbt.md) for developers and form designers, [FBTL](integration/fbtl.md) for non-technical end users.
 
@@ -110,6 +154,28 @@ Deep dives on individual capabilities.
 - [Confirmation ("Thank You") Screen](features/confirmation-screen.md) — Configuring the post-submit thank-you screen: config.confirmation, dynamic ${...} content, and the onFlowComplete return contract.
 - [Custom Presets & Templates (FBT)](features/custom-presets-and-templates.md) — Extending FBT's pool with custom presets/templates: data-based vs factory definitions, icon catalog, collision rules, server-stored definitions.
 - [FBRE Theming Guide](features/fbre-theming.md) — Theming FBRE-rendered forms: colorScheme presets, palette knobs, raw --fbre-* token overrides, precedence model, full token catalog.
+
+## Example flows
+
+Real Flow documents, each validated against the schema on every commit. Copy one and render it.
+
+| Example | Screens | What it shows |
+|---|---|---|
+| [`conditions-full.flow.json`](examples/conditions-full.flow.json) | 9 | Conditions — Full Operator Demo |
+| [`confirmation-demo.flow.json`](examples/confirmation-demo.flow.json) | 1 | Confirmation Demo |
+| [`contact-us.flow.json`](examples/contact-us.flow.json) | 1 | Contact Us |
+| [`conversational-onboarding.flow.json`](examples/conversational-onboarding.flow.json) | 9 | Conversational Onboarding |
+| [`datetime-demo.flow.json`](examples/datetime-demo.flow.json) | 3 | Date/Time & New Components Demo |
+| [`feedback.flow.json`](examples/feedback.flow.json) | 2 | Feedback |
+| [`file-upload.flow.json`](examples/file-upload.flow.json) | 2 | File Upload |
+| [`lead-generation.flow.json`](examples/lead-generation.flow.json) | 2 | Lead Generation |
+| [`one-of-each.flow.json`](examples/one-of-each.flow.json) | 5 | One of Each |
+| [`patient-intake.flow.json`](examples/patient-intake.flow.json) | 4 | Patient Intake Form |
+| [`quickstart.flow.json`](examples/quickstart.flow.json) | 1 | Contact us |
+| [`quote-builder.flow.json`](examples/quote-builder.flow.json) | 3 | Project Quote Builder |
+| [`screen-transitions.flow.json`](examples/screen-transitions.flow.json) | 4 | Screen Transitions Demo |
+| [`theme-preview.flow.json`](examples/theme-preview.flow.json) | 1 | Theme Preview |
+| [`theme-reference.flow.json`](examples/theme-reference.flow.json) | 5 | Theme Reference |
 
 ## Machine-readable schema
 

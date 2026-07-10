@@ -1,0 +1,133 @@
+{
+	"uuid": "flow-contact-us-001",
+	"config": {
+		"theme": { "color": "#d32f2f" },
+		"summary": false
+	},
+	"metadata": {
+		"name": "Contact Us",
+		"description": "Get in touch with our team."
+	},
+	"screens": [
+		{
+			"uuid": "screen-contact-us",
+			"label": "Contact Us",
+			"components": [
+				{
+					"uuid": "comp-contact-header",
+					"type": "header",
+					"properties": {
+						"value": "Contact Us"
+					}
+				},
+				{
+					"uuid": "comp-contact-intro",
+					"type": "text",
+					"properties": {
+						"value": "We'd love to hear from you. Fill out the form below and we'll get back to you as soon as possible.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-contact-name-email-group",
+					"type": "group",
+					"properties": {},
+					"components": [
+						{
+							"uuid": "comp-contact-name",
+							"type": "inputText",
+							"properties": {
+								"label": "Name",
+								"required": true,
+								"placeholder": "Your full name",
+								"width": "half"
+							}
+						},
+						{
+							"uuid": "comp-contact-email",
+							"type": "inputText",
+							"properties": {
+								"label": "Email",
+								"required": true,
+								"placeholder": "you@example.com",
+								"regex": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+								"width": "half"
+							}
+						}
+					]
+				},
+				{
+					"uuid": "comp-contact-phone",
+					"type": "inputText",
+					"properties": {
+						"label": "Phone",
+						"placeholder": "555-123-4567"
+					}
+				},
+				{
+					"uuid": "comp-contact-subject",
+					"type": "dropDown",
+					"properties": {
+						"label": "Subject",
+						"options": [
+							{
+								"label": "General Inquiry",
+								"value": "General Inquiry"
+							},
+							{
+								"label": "Support Request",
+								"value": "Support Request"
+							},
+							{
+								"label": "Billing Question",
+								"value": "Billing Question"
+							},
+							{
+								"label": "Feedback",
+								"value": "Feedback"
+							},
+							{
+								"label": "Partnership",
+								"value": "Partnership"
+							},
+							{
+								"label": "Other",
+								"value": "Other"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-preferred-contact",
+					"type": "radio",
+					"properties": {
+						"label": "Preferred Contact Method",
+						"options": [
+							{
+								"label": "Email",
+								"value": "Email"
+							},
+							{
+								"label": "Phone",
+								"value": "Phone"
+							},
+							{
+								"label": "No Preference",
+								"value": "No Preference"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-contact-message",
+					"type": "inputTextArea",
+					"properties": {
+						"label": "Message",
+						"required": true,
+						"placeholder": "How can we help you?"
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,310 @@
+{
+	"uuid": "flow-theme-reference-001",
+	"config": {
+		"mode": "standard",
+		"theme": {
+			"colorScheme": "light",
+			"style": "soft-outlined",
+			"color": "#7c3aed",
+			"background": "#f5f3ff",
+			"surface": "#ffffff",
+			"text": "#1e1b2e",
+			"border": "#c4b5fd",
+			"radius": "10px",
+			"fontFamily": "Georgia, \"Times New Roman\", serif",
+			"error": "#dc2626",
+			"success": "#16a34a",
+			"warning": "#d97706"
+		},
+		"navigation": { "transition": "slideFade" },
+		"controls": { "show": true, "showStepper": true },
+		"summary": false
+	},
+	"metadata": {
+		"name": "Theme Reference",
+		"description": "Annotated walkthrough of every theme element. Each screen shows a live control and describes what the token affects and where it is set (config path + this flow's value). Distinct from the theme-editor's built-in preview flow."
+	},
+	"screens": [
+		{
+			"uuid": "screen-overview",
+			"label": "Overview",
+			"components": [
+				{
+					"uuid": "comp-overview-header",
+					"type": "header",
+					"properties": {
+						"value": "Theme Reference"
+					}
+				},
+				{
+					"uuid": "comp-overview-intro",
+					"type": "text",
+					"properties": {
+						"value": "This flow annotates every theme element. On each screen you'll see the actual control a token affects, alongside a note describing what it controls and the exact config path where it's set. All values used by this flow are shown in the notes. Theme settings live under config.theme (with mode on config)."
+					}
+				},
+				{
+					"uuid": "comp-overview-note",
+					"type": "callout",
+					"properties": {
+						"title": "How theming works",
+						"value": "Two layers: colorScheme + style pick a built-in preset (seed palette + shape). The palette knobs (color, background, surface, text, border, radius, fontFamily, error, success, warning) override individual --fbre-* tokens on top of that preset. Any subset may be set; unset knobs fall through to the preset.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-overview-mode",
+					"type": "callout",
+					"properties": {
+						"title": "Mode  —  config.mode",
+						"value": "This is where mode is set. Standard renders a multi-field form; Conversational shows one question at a time. This flow uses \"standard\".",
+						"variant": "neutral"
+					}
+				},
+				{
+					"uuid": "comp-overview-scheme",
+					"type": "callout",
+					"properties": {
+						"title": "Color Scheme  —  config.theme.colorScheme",
+						"value": "This is where the color scheme is set. It switches the form between light and dark backgrounds, seeding the whole token layer. This flow uses \"light\".",
+						"variant": "neutral"
+					}
+				},
+				{
+					"uuid": "comp-overview-style",
+					"type": "callout",
+					"properties": {
+						"title": "Style  —  config.theme.style",
+						"value": "This is where the style is set. A preset visual treatment — borders, spacing, and emphasis — for the chosen mode. This flow uses \"soft-outlined\". Other options: clean, outlined, refined-clean, airy-clean, defined-outlined, centered-minimal, stacked-cards, soft-float, bold-statement.",
+						"variant": "neutral"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-accent",
+			"label": "Accent Color",
+			"components": [
+				{
+					"uuid": "comp-accent-note",
+					"type": "callout",
+					"properties": {
+						"title": "Accent Color  —  config.theme.color",
+						"value": "This is where the accent color is set. It's the primary color used for buttons, focus rings, and selected states. This flow uses #7c3aed. Watch it in the controls below and in the Next button.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-accent-input",
+					"type": "inputText",
+					"properties": {
+						"label": "Click into this field",
+						"placeholder": "The focus ring uses the accent color",
+						"helperText": "The outline that appears while this field is focused is the accent color."
+					}
+				},
+				{
+					"uuid": "comp-accent-radio",
+					"type": "radio",
+					"properties": {
+						"label": "Select an option",
+						"helperText": "The selected radio is filled with the accent color.",
+						"options": [
+							{ "label": "Option A", "value": "a" },
+							{ "label": "Option B", "value": "b" },
+							{ "label": "Option C", "value": "c" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-accent-toggle",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "Toggle me — the ON state is the accent color"
+					}
+				},
+				{
+					"uuid": "comp-accent-slider",
+					"type": "slider",
+					"properties": {
+						"label": "The filled track and thumb use the accent color",
+						"min": 0,
+						"max": 100,
+						"steps": 10
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-text",
+			"label": "Text & Type",
+			"components": [
+				{
+					"uuid": "comp-text-note",
+					"type": "callout",
+					"properties": {
+						"title": "Text  —  config.theme.text",
+						"value": "This is where the text color is set. It's the default color of body text and field labels. This flow uses #1e1b2e. Every label and paragraph on this screen is drawn in it.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-text-derived",
+					"type": "callout",
+					"properties": {
+						"title": "Secondary / placeholder / label colors — derived, not a separate knob",
+						"value": "There is no separate \"secondary color\" setting. Secondary text, input placeholders, and label tints are all DERIVED from config.theme.text automatically. Set text and these follow. (Under the hood: --fbre-text derives --fbre-text-secondary, --fbre-placeholder, and --fbre-label.)",
+						"variant": "neutral"
+					}
+				},
+				{
+					"uuid": "comp-text-font-note",
+					"type": "callout",
+					"properties": {
+						"title": "Font Family  —  config.theme.fontFamily",
+						"value": "This is where the typeface is set. It's the font used throughout the rendered form. This flow uses a serif stack (Georgia) so the change is obvious — notice every heading, label, and paragraph is serif.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-text-sample",
+					"type": "inputText",
+					"properties": {
+						"label": "This label uses the Text color and Font Family",
+						"placeholder": "This placeholder is the derived (lighter) text color",
+						"helperText": "Helper text is a derived, muted variant of the Text color."
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-surface",
+			"label": "Surface & Shape",
+			"components": [
+				{
+					"uuid": "comp-surface-bg-note",
+					"type": "callout",
+					"properties": {
+						"title": "Background  —  config.theme.background",
+						"value": "This is where the background is set. It's the outermost page color sitting behind the form. This flow uses #f5f3ff (a light violet tint) — it's the ground you see around and behind these cards.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-surface-note",
+					"type": "callout",
+					"properties": {
+						"title": "Surface  —  config.theme.surface",
+						"value": "This is where the surface color is set. It's the fill color of cards, inputs, and other raised areas. This flow uses #ffffff — the white fill of the field and cards below sits on top of the tinted background.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-surface-border-note",
+					"type": "callout",
+					"properties": {
+						"title": "Border  —  config.theme.border",
+						"value": "This is where the border color is set. It's the color of input outlines, dividers, and card edges. This flow uses #c4b5fd. The rule below and the outlines on the field and cards all use it.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-surface-divider",
+					"type": "divider",
+					"properties": {
+						"value": "This divider line is drawn in the Border color"
+					}
+				},
+				{
+					"uuid": "comp-surface-radius-note",
+					"type": "callout",
+					"properties": {
+						"title": "Corner Radius  —  config.theme.radius",
+						"value": "This is where corner rounding is set (any CSS length). It rounds the corners on inputs, buttons, and cards. This flow uses 10px — notice how rounded the field, cards, and buttons are.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-surface-input",
+					"type": "inputText",
+					"properties": {
+						"label": "This field shows Surface (fill), Border (outline), and Corner Radius",
+						"placeholder": "White fill, violet outline, 10px rounded corners"
+					}
+				},
+				{
+					"uuid": "comp-surface-cards",
+					"type": "cardSelect",
+					"properties": {
+						"label": "These cards use Surface, Border, and Corner Radius (and Accent when selected)",
+						"options": [
+							{ "label": "Card One", "value": "one", "description": "Surface fill, border edge, rounded corners." },
+							{ "label": "Card Two", "value": "two", "description": "Select one — the chosen card picks up the accent color." },
+							{ "label": "Card Three", "value": "three", "description": "All three tokens are visible at once here." }
+						]
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-status",
+			"label": "Status Colors",
+			"components": [
+				{
+					"uuid": "comp-status-error-note",
+					"type": "callout",
+					"properties": {
+						"title": "Error  —  config.theme.error",
+						"value": "This is where the error color is set. It's shown for validation errors and required-field messages. This flow uses #dc2626. Leave the required field below blank and press Next to see it.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-status-required",
+					"type": "inputText",
+					"properties": {
+						"label": "Required field (leave blank, then press Next)",
+						"placeholder": "The error message and outline use the Error color",
+						"required": true
+					}
+				},
+				{
+					"uuid": "comp-status-success-note",
+					"type": "callout",
+					"properties": {
+						"title": "Success  —  config.theme.success",
+						"value": "This is where the success color is set. It's used for positive confirmation callouts. This flow uses #16a34a — the green callout directly below is rendered in it.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-status-success-demo",
+					"type": "callout",
+					"properties": {
+						"title": "All set",
+						"value": "This success callout is drawn in config.theme.success. This is how a positive confirmation looks.",
+						"variant": "success"
+					}
+				},
+				{
+					"uuid": "comp-status-warning-note",
+					"type": "callout",
+					"properties": {
+						"title": "Warning  —  config.theme.warning",
+						"value": "This is where the warning color is set. It's used for caution callouts. This flow uses #d97706 — the amber callout directly below is rendered in it.",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-status-warning-demo",
+					"type": "callout",
+					"properties": {
+						"title": "Heads up",
+						"value": "This warning callout is drawn in config.theme.warning. This is how a caution message looks.",
+						"variant": "warning"
+					}
+				}
+			]
+		}
+	]
+}

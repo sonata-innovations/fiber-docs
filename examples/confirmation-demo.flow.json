@@ -1,0 +1,50 @@
+{
+	"uuid": "flow-confirmation-demo-001",
+	"config": {
+		"theme": { "color": "#2e7d32" },
+		"summary": false,
+		"confirmation": {
+			"show": true,
+			"title": "Thank you!",
+			"body": "We've received your request, ${comp-confirm-name}. A copy is on its way to ${comp-confirm-email}, and our team at ${support_email} will follow up shortly."
+		}
+	},
+	"metadata": {
+		"name": "Confirmation Demo",
+		"description": "Demonstrates the terminal confirmation screen with ${...} reference interpolation."
+	},
+	"screens": [
+		{
+			"uuid": "screen-confirm-demo",
+			"label": "Request a Callback",
+			"components": [
+				{
+					"uuid": "comp-confirm-header",
+					"type": "header",
+					"properties": {
+						"value": "Request a Callback"
+					}
+				},
+				{
+					"uuid": "comp-confirm-name",
+					"type": "inputText",
+					"properties": {
+						"label": "Name",
+						"required": true,
+						"placeholder": "Your full name"
+					}
+				},
+				{
+					"uuid": "comp-confirm-email",
+					"type": "inputText",
+					"properties": {
+						"label": "Email",
+						"required": true,
+						"placeholder": "you@example.com",
+						"regex": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+					}
+				}
+			]
+		}
+	]
+}

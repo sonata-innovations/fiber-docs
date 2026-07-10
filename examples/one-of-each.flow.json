@@ -1,0 +1,263 @@
+{
+	"uuid": "flow-one-of-each-001",
+	"config": {
+		"theme": { "color": "#6366f1" },
+		"navigation": { "transition": "slide" },
+		"controls": { "show": true, "showStepper": true },
+		"summary": false
+	},
+	"metadata": {
+		"name": "One of Each",
+		"description": "Example flow containing one of every non-container component type."
+	},
+	"screens": [
+		{
+			"uuid": "screen-display",
+			"label": "Display",
+			"components": [
+				{
+					"uuid": "comp-header",
+					"type": "header",
+					"properties": {
+						"value": "Header"
+					}
+				},
+				{
+					"uuid": "comp-text",
+					"type": "text",
+					"properties": {
+						"value": "Text"
+					}
+				},
+				{
+					"uuid": "comp-divider",
+					"type": "divider",
+					"properties": {
+						"value": "Divider"
+					}
+				},
+				{
+					"uuid": "comp-callout",
+					"type": "callout",
+					"properties": {
+						"value": "Callout",
+						"variant": "info"
+					}
+				},
+				{
+					"uuid": "comp-table",
+					"type": "table",
+					"properties": {
+						"label": "Table",
+						"columns": [
+							{ "label": "Column A" },
+							{ "label": "Column B" }
+						],
+						"rows": [
+							{ "label": "Row 1", "values": ["A1", "B1"] },
+							{ "label": "Row 2", "values": ["A2", "B2"] }
+						]
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-inputs",
+			"label": "Inputs",
+			"components": [
+				{
+					"uuid": "comp-input-text",
+					"type": "inputText",
+					"properties": {
+						"label": "Input Text",
+						"placeholder": "Type something..."
+					}
+				},
+				{
+					"uuid": "comp-input-text-area",
+					"type": "inputTextArea",
+					"properties": {
+						"label": "Input Text Area",
+						"placeholder": "Type a longer message..."
+					}
+				},
+				{
+					"uuid": "comp-input-number",
+					"type": "inputNumber",
+					"properties": {
+						"label": "Input Number",
+						"placeholder": "Enter a number"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-selection",
+			"label": "Selection",
+			"components": [
+				{
+					"uuid": "comp-drop-down",
+					"type": "dropDown",
+					"properties": {
+						"label": "Drop Down",
+						"options": [
+							{ "label": "Option 1", "value": "option-1" },
+							{ "label": "Option 2", "value": "option-2" },
+							{ "label": "Option 3", "value": "option-3" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-drop-down-multi",
+					"type": "dropDownMulti",
+					"properties": {
+						"label": "Drop Down Multi",
+						"options": [
+							{ "label": "Option A", "value": "option-a" },
+							{ "label": "Option B", "value": "option-b" },
+							{ "label": "Option C", "value": "option-c" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-checkbox",
+					"type": "checkbox",
+					"properties": {
+						"label": "Checkbox",
+						"options": [
+							{ "label": "Choice 1", "value": "choice-1" },
+							{ "label": "Choice 2", "value": "choice-2" },
+							{ "label": "Choice 3", "value": "choice-3" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-radio",
+					"type": "radio",
+					"properties": {
+						"label": "Radio",
+						"options": [
+							{ "label": "Choice A", "value": "choice-a" },
+							{ "label": "Choice B", "value": "choice-b" },
+							{ "label": "Choice C", "value": "choice-c" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-toggle-switch",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "Toggle Switch"
+					}
+				},
+				{
+					"uuid": "comp-yes-no",
+					"type": "yesNo",
+					"properties": {
+						"label": "Yes No"
+					}
+				},
+				{
+					"uuid": "comp-card-select",
+					"type": "cardSelect",
+					"properties": {
+						"label": "Card Select",
+						"options": [
+							{ "label": "Card A", "value": "card-a", "description": "First card option" },
+							{ "label": "Card B", "value": "card-b", "description": "Second card option" },
+							{ "label": "Card C", "value": "card-c", "description": "Third card option" }
+						]
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-date-time",
+			"label": "Date & Time",
+			"components": [
+				{
+					"uuid": "comp-date",
+					"type": "date",
+					"properties": {
+						"label": "Date"
+					}
+				},
+				{
+					"uuid": "comp-time",
+					"type": "time",
+					"properties": {
+						"label": "Time"
+					}
+				},
+				{
+					"uuid": "comp-date-time",
+					"type": "dateTime",
+					"properties": {
+						"label": "Date Time"
+					}
+				},
+				{
+					"uuid": "comp-date-range",
+					"type": "dateRange",
+					"properties": {
+						"label": "Date Range"
+					}
+				},
+				{
+					"uuid": "comp-time-range",
+					"type": "timeRange",
+					"properties": {
+						"label": "Time Range"
+					}
+				},
+				{
+					"uuid": "comp-date-time-range",
+					"type": "dateTimeRange",
+					"properties": {
+						"label": "Date Time Range"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-interactive",
+			"label": "Interactive",
+			"components": [
+				{
+					"uuid": "comp-file-upload",
+					"type": "fileUpload",
+					"properties": {
+						"label": "File Upload",
+						"accept": "*/*"
+					}
+				},
+				{
+					"uuid": "comp-rating",
+					"type": "rating",
+					"properties": {
+						"label": "Rating",
+						"max": 5,
+						"precision": 1
+					}
+				},
+				{
+					"uuid": "comp-slider",
+					"type": "slider",
+					"properties": {
+						"label": "Slider",
+						"min": 0,
+						"max": 100,
+						"steps": 10
+					}
+				},
+				{
+					"uuid": "comp-color-picker",
+					"type": "colorPicker",
+					"properties": {
+						"label": "Color Picker"
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,301 @@
+{
+	"uuid": "flow-conv-onboarding-001",
+	"config": {
+		"mode": "conversational",
+		"theme": { "color": "#6366f1", "style": "centered-minimal" },
+		"navigation": { "transition": "scaleFade" },
+		"controls": { "stepperStyle": "default" }
+	},
+	"metadata": {
+		"name": "Conversational Onboarding",
+		"description": "A conversational-mode demo: one question per screen with auto-advance, enter-to-advance, and animated entry."
+	},
+	"screens": [
+		{
+			"uuid": "screen-welcome",
+			"label": "Welcome",
+			"components": [
+				{
+					"uuid": "comp-welcome-header",
+					"type": "header",
+					"properties": {
+						"value": "Welcome! Let's get you set up."
+					}
+				},
+				{
+					"uuid": "comp-welcome-text",
+					"type": "text",
+					"properties": {
+						"value": "This takes about 2 minutes. We'll ask a few quick questions to personalize your experience.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-goal",
+					"type": "cardSelect",
+					"properties": {
+						"label": "What brings you here today?",
+						"options": [
+							{
+								"label": "Build",
+								"title": "Build",
+								"description": "Create forms for my product",
+								"value": "build"
+							},
+							{
+								"label": "Explore",
+								"title": "Explore",
+								"description": "Just checking things out",
+								"value": "explore"
+							},
+							{
+								"label": "Migrate",
+								"title": "Migrate",
+								"description": "Moving from another tool",
+								"value": "migrate"
+							},
+							{
+								"label": "Evaluate",
+								"title": "Evaluate",
+								"description": "Comparing options for my team",
+								"value": "evaluate"
+							}
+						],
+						"columns": 2
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-role",
+			"label": "Role",
+			"components": [
+				{
+					"uuid": "comp-role-header",
+					"type": "header",
+					"properties": {
+						"value": "What best describes your role?"
+					}
+				},
+				{
+					"uuid": "comp-role",
+					"type": "radio",
+					"properties": {
+						"label": "",
+						"layout": "vertical",
+						"options": [
+							{ "label": "Designer", "value": "designer" },
+							{ "label": "Developer", "value": "developer" },
+							{ "label": "Product Manager", "value": "product-manager" },
+							{ "label": "Business / Operations", "value": "business" },
+							{ "label": "Other", "value": "other" }
+						]
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-name",
+			"label": "Name",
+			"components": [
+				{
+					"uuid": "comp-name-header",
+					"type": "header",
+					"properties": {
+						"value": "What's your name?"
+					}
+				},
+				{
+					"uuid": "comp-name",
+					"type": "inputText",
+					"properties": {
+						"label": "Full Name",
+						"placeholder": "e.g. Alex Johnson",
+						"validation": {
+							"rules": [{ "type": "required" }]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-company",
+			"label": "Company",
+			"components": [
+				{
+					"uuid": "comp-company-header",
+					"type": "header",
+					"properties": {
+						"value": "What company do you work for?"
+					}
+				},
+				{
+					"uuid": "comp-company",
+					"type": "inputText",
+					"properties": {
+						"label": "Company Name",
+						"placeholder": "e.g. Acme Corp"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-team-size",
+			"label": "Team Size",
+			"components": [
+				{
+					"uuid": "comp-team-header",
+					"type": "header",
+					"properties": {
+						"value": "How large is your team?"
+					}
+				},
+				{
+					"uuid": "comp-team-text",
+					"type": "text",
+					"properties": {
+						"value": "This helps us recommend the right plan.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-team-size",
+					"type": "dropDown",
+					"properties": {
+						"label": "Team Size",
+						"options": [
+							{ "label": "Just me", "value": "1" },
+							{ "label": "2–10", "value": "2-10" },
+							{ "label": "11–50", "value": "11-50" },
+							{ "label": "51–200", "value": "51-200" },
+							{ "label": "200+", "value": "200+" }
+						]
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-used-before",
+			"label": "Experience",
+			"components": [
+				{
+					"uuid": "comp-used-header",
+					"type": "header",
+					"properties": {
+						"value": "Have you used a form builder before?"
+					}
+				},
+				{
+					"uuid": "comp-used-before",
+					"type": "yesNo",
+					"properties": {
+						"label": ""
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-which-tool",
+			"label": "Previous Tool",
+			"conditions": {
+				"action": "show",
+				"when": {
+					"logic": "and",
+					"rules": [
+						{
+							"source": "comp-used-before",
+							"operator": "equals",
+							"value": "yes"
+						}
+					]
+				}
+			},
+			"components": [
+				{
+					"uuid": "comp-which-header",
+					"type": "header",
+					"properties": {
+						"value": "Which tool were you using?"
+					}
+				},
+				{
+					"uuid": "comp-which-tool",
+					"type": "radio",
+					"properties": {
+						"label": "",
+						"layout": "vertical",
+						"options": [
+							{ "label": "Typeform", "value": "typeform" },
+							{ "label": "Google Forms", "value": "google-forms" },
+							{ "label": "JotForm", "value": "jotform" },
+							{ "label": "Microsoft Forms", "value": "ms-forms" },
+							{ "label": "Something else", "value": "other" }
+						]
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-budget",
+			"label": "Budget",
+			"components": [
+				{
+					"uuid": "comp-budget-header",
+					"type": "header",
+					"properties": {
+						"value": "What's your monthly budget?"
+					}
+				},
+				{
+					"uuid": "comp-budget-text",
+					"type": "text",
+					"properties": {
+						"value": "No worries if you're unsure — just a rough estimate.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-budget",
+					"type": "inputNumber",
+					"properties": {
+						"label": "Monthly Budget (USD)",
+						"placeholder": "e.g. 50",
+						"startAdornment": "$",
+						"validation": {
+							"rules": [{ "type": "minValue", "params": { "min": 0 } }]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-newsletter",
+			"label": "Stay in Touch",
+			"components": [
+				{
+					"uuid": "comp-newsletter-header",
+					"type": "header",
+					"properties": {
+						"value": "One last thing!"
+					}
+				},
+				{
+					"uuid": "comp-newsletter-text",
+					"type": "text",
+					"properties": {
+						"value": "Want to stay in the loop? We send product updates once a month — no spam.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-newsletter",
+					"type": "yesNo",
+					"properties": {
+						"label": "Subscribe to newsletter?"
+					}
+				}
+			],
+			"nextButtonLabel": "Finish"
+		}
+	]
+}

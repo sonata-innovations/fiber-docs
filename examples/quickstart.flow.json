@@ -1,0 +1,41 @@
+{
+  "uuid": "flow-quickstart",
+  "metadata": { "name": "Contact us" },
+  "screens": [
+    {
+      "uuid": "screen-about-you",
+      "label": "About you",
+      "components": [
+        {
+          "uuid": "comp-name",
+          "type": "inputText",
+          "properties": {
+            "label": "Your name",
+            "validation": { "rules": [{ "type": "required" }] }
+          }
+        },
+        {
+          "uuid": "comp-newsletter",
+          "type": "yesNo",
+          "properties": { "label": "Subscribe to our newsletter?" }
+        },
+        {
+          "uuid": "comp-email",
+          "type": "inputText",
+          "properties": {
+            "label": "Email address",
+            "inputType": "email",
+            "validation": { "rules": [{ "type": "required" }, { "type": "email" }] }
+          },
+          "conditions": {
+            "action": "show",
+            "when": {
+              "logic": "and",
+              "rules": [{ "source": "comp-newsletter", "operator": "equals", "value": "yes" }]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

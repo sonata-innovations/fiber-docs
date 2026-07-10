@@ -1,0 +1,189 @@
+{
+	"uuid": "flow-screen-transitions-001",
+	"config": {
+		"theme": { "color": "#6366f1" },
+		"navigation": { "transition": "slideFade" },
+		"summary": true
+	},
+	"metadata": {
+		"name": "Screen Transitions Demo",
+		"description": "Demonstrates animated screen transitions with the slideFade effect."
+	},
+	"screens": [
+		{
+			"uuid": "screen-welcome",
+			"label": "Welcome",
+			"components": [
+				{
+					"uuid": "comp-welcome-header",
+					"type": "header",
+					"properties": {
+						"value": "Welcome!"
+					}
+				},
+				{
+					"uuid": "comp-welcome-intro",
+					"type": "text",
+					"properties": {
+						"value": "Thanks for trying out screen transitions. Navigate through this flow using the buttons below — notice how each screen change is animated.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-welcome-ready",
+					"type": "yesNo",
+					"properties": {
+						"label": "Ready to get started?",
+						"labelYes": "Let's go!",
+						"labelNo": "Not yet"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-details",
+			"label": "Your Details",
+			"components": [
+				{
+					"uuid": "comp-details-header",
+					"type": "header",
+					"properties": {
+						"value": "Your Details"
+					}
+				},
+				{
+					"uuid": "comp-first-name",
+					"type": "inputText",
+					"properties": {
+						"label": "First Name",
+						"placeholder": "Enter your first name",
+						"width": "half",
+						"validation": {
+							"rules": [{ "type": "required" }]
+						}
+					}
+				},
+				{
+					"uuid": "comp-last-name",
+					"type": "inputText",
+					"properties": {
+						"label": "Last Name",
+						"placeholder": "Enter your last name",
+						"width": "half",
+						"validation": {
+							"rules": [{ "type": "required" }]
+						}
+					}
+				},
+				{
+					"uuid": "comp-email",
+					"type": "inputText",
+					"properties": {
+						"label": "Email Address",
+						"placeholder": "you@example.com",
+						"inputType": "email",
+						"validation": {
+							"rules": [
+								{ "type": "required" },
+								{ "type": "email" }
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-phone",
+					"type": "inputText",
+					"properties": {
+						"label": "Phone Number",
+						"placeholder": "(555) 123-4567",
+						"inputType": "tel"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-preferences",
+			"label": "Preferences",
+			"components": [
+				{
+					"uuid": "comp-prefs-header",
+					"type": "header",
+					"properties": {
+						"value": "Preferences"
+					}
+				},
+				{
+					"uuid": "comp-experience-rating",
+					"type": "rating",
+					"properties": {
+						"label": "How would you rate your experience so far?",
+						"max": 5,
+						"precision": 1
+					}
+				},
+				{
+					"uuid": "comp-satisfaction-slider",
+					"type": "slider",
+					"properties": {
+						"label": "Satisfaction Level",
+						"min": 0,
+						"max": 100,
+						"steps": 5,
+						"initValue": 50
+					}
+				},
+				{
+					"uuid": "comp-interest-dropdown",
+					"type": "dropDown",
+					"properties": {
+						"label": "Primary Interest",
+						"placeholder": "Select an option",
+						"options": [
+							{ "label": "Product Updates", "value": "updates" },
+							{ "label": "Customer Support", "value": "support" },
+							{ "label": "Partnership", "value": "partnership" },
+							{ "label": "General Inquiry", "value": "general" }
+						]
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-final",
+			"label": "Final Thoughts",
+			"components": [
+				{
+					"uuid": "comp-final-header",
+					"type": "header",
+					"properties": {
+						"value": "Final Thoughts"
+					}
+				},
+				{
+					"uuid": "comp-comments",
+					"type": "inputTextArea",
+					"properties": {
+						"label": "Any additional comments?",
+						"placeholder": "Share your thoughts..."
+					}
+				},
+				{
+					"uuid": "comp-newsletter",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "Subscribe to our newsletter"
+					}
+				},
+				{
+					"uuid": "comp-attachment",
+					"type": "fileUpload",
+					"properties": {
+						"label": "Attach a file (optional)",
+						"accept": ".pdf,.jpg,.png",
+						"maxSize": 5242880
+					}
+				}
+			]
+		}
+	]
+}

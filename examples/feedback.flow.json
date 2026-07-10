@@ -1,0 +1,160 @@
+{
+	"uuid": "flow-feedback-001",
+	"config": {
+		"theme": { "color": "#f57c00" },
+		"summary": true
+	},
+	"metadata": {
+		"name": "Feedback",
+		"description": "Help us improve by sharing your experience."
+	},
+	"screens": [
+		{
+			"uuid": "screen-ratings",
+			"label": "Ratings",
+			"components": [
+				{
+					"uuid": "comp-feedback-header",
+					"type": "header",
+					"properties": {
+						"value": "Share Your Feedback"
+					}
+				},
+				{
+					"uuid": "comp-feedback-intro",
+					"type": "text",
+					"properties": {
+						"value": "Your feedback helps us improve. Please rate your experience below — it only takes a minute.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-overall-rating",
+					"type": "rating",
+					"properties": {
+						"label": "Overall Experience",
+						"required": true,
+						"max": 5,
+						"precision": 1
+					}
+				},
+				{
+					"uuid": "comp-areas-divider",
+					"type": "divider",
+					"properties": {
+						"value": "Rate Specific Areas",
+						"textAlign": "center",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-service-rating",
+					"type": "rating",
+					"properties": {
+						"label": "Customer Service",
+						"max": 5,
+						"precision": 0.5
+					}
+				},
+				{
+					"uuid": "comp-quality-rating",
+					"type": "rating",
+					"properties": {
+						"label": "Product Quality",
+						"max": 5,
+						"precision": 0.5
+					}
+				},
+				{
+					"uuid": "comp-value-rating",
+					"type": "rating",
+					"properties": {
+						"label": "Value for Money",
+						"max": 5,
+						"precision": 0.5
+					}
+				},
+				{
+					"uuid": "comp-nps",
+					"type": "slider",
+					"properties": {
+						"label": "How likely are you to recommend us?",
+						"required": true,
+						"min": 0,
+						"max": 10,
+						"steps": 1,
+						"marks": true,
+						"initValue": 5
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-details",
+			"label": "Details",
+			"components": [
+				{
+					"uuid": "comp-enjoyed",
+					"type": "checkbox",
+					"properties": {
+						"label": "What did you enjoy?",
+						"helperText": "Select all that apply",
+						"options": [
+							{ "label": "Product Quality", "value": "Product Quality" },
+							{ "label": "Customer Service", "value": "Customer Service" },
+							{ "label": "Ease of Use", "value": "Ease of Use" },
+							{ "label": "Speed", "value": "Speed" },
+							{ "label": "Pricing", "value": "Pricing" },
+							{ "label": "Other", "value": "Other" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-improve",
+					"type": "checkbox",
+					"properties": {
+						"label": "What could improve?",
+						"helperText": "Select all that apply",
+						"options": [
+							{ "label": "Product Features", "value": "Product Features" },
+							{ "label": "Customer Support", "value": "Customer Support" },
+							{ "label": "Pricing", "value": "Pricing" },
+							{ "label": "Documentation", "value": "Documentation" },
+							{ "label": "Performance", "value": "Performance" },
+							{ "label": "Other", "value": "Other" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-additional-comments",
+					"type": "inputTextArea",
+					"properties": {
+						"label": "Additional Comments",
+						"placeholder": "Tell us more about your experience..."
+					}
+				},
+				{
+					"uuid": "comp-how-found",
+					"type": "dropDown",
+					"properties": {
+						"label": "How did you find us?",
+						"options": [
+							{ "label": "Search Engine", "value": "Search Engine" },
+							{ "label": "Social Media", "value": "Social Media" },
+							{ "label": "Friend / Family", "value": "Friend/Family" },
+							{ "label": "Advertisement", "value": "Advertisement" },
+							{ "label": "Other", "value": "Other" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-contact-permission",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "You may contact me about my feedback"
+					}
+				}
+			]
+		}
+	]
+}

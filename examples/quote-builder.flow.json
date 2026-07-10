@@ -1,0 +1,369 @@
+{
+	"uuid": "flow-quote-builder-001",
+	"config": {
+		"theme": { "color": "#0d9488" },
+		"summary": true
+	},
+	"metadata": {
+		"name": "Project Quote Builder",
+		"description": "Build an itemized quote with per-line subtotals and a running total."
+	},
+	"calculations": [
+		{
+			"uuid": "calc-grand-total",
+			"label": "Grand Total",
+			"formula": "SUM({comp-line-subtotal})",
+			"format": "currency",
+			"decimalPlaces": 2,
+			"currencySymbol": "$"
+		},
+		{
+			"uuid": "calc-line-count",
+			"label": "Line Items",
+			"formula": "COUNT({comp-line-subtotal})",
+			"format": "number",
+			"decimalPlaces": 0
+		}
+	],
+	"screens": [
+		{
+			"uuid": "screen-client",
+			"label": "Client Information",
+			"components": [
+				{
+					"uuid": "comp-client-header",
+					"type": "header",
+					"properties": {
+						"value": "Client Information"
+					}
+				},
+				{
+					"uuid": "comp-client-intro",
+					"type": "text",
+					"properties": {
+						"value": "Enter the client's details for this quote."
+					}
+				},
+				{
+					"uuid": "comp-client-name-group",
+					"type": "group",
+					"properties": {},
+					"components": [
+						{
+							"uuid": "comp-client-name",
+							"type": "inputText",
+							"properties": {
+								"label": "Client Name",
+								"showLabel": true,
+								"placeholder": "Acme Corp.",
+								"width": "half",
+								"validation": { "rules": [{ "type": "required" }] }
+							}
+						},
+						{
+							"uuid": "comp-client-email",
+							"type": "inputText",
+							"properties": {
+								"label": "Email",
+								"showLabel": true,
+								"placeholder": "contact@example.com",
+								"width": "half",
+								"validation": {
+									"rules": [
+										{ "type": "required" },
+										{ "type": "email" }
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"uuid": "comp-project-name",
+					"type": "inputText",
+					"properties": {
+						"label": "Project Name",
+						"showLabel": true,
+						"placeholder": "e.g. Website Redesign",
+						"validation": { "rules": [{ "type": "required" }] }
+					}
+				},
+				{
+					"uuid": "comp-quote-date",
+					"type": "date",
+					"properties": {
+						"label": "Quote Date",
+						"showLabel": true,
+						"width": "half",
+						"validation": { "rules": [{ "type": "required" }] }
+					}
+				},
+				{
+					"uuid": "comp-valid-until",
+					"type": "date",
+					"properties": {
+						"label": "Valid Until",
+						"showLabel": true,
+						"width": "half"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-line-items",
+			"label": "Line Items",
+			"components": [
+				{
+					"uuid": "comp-line-header",
+					"type": "header",
+					"properties": {
+						"value": "Line Items"
+					}
+				},
+				{
+					"uuid": "comp-line-intro",
+					"type": "text",
+					"properties": {
+						"value": "Add each service or product as a line item. The subtotal for each row is calculated automatically."
+					}
+				},
+				{
+					"uuid": "comp-line-repeater",
+					"type": "repeater",
+					"properties": {
+						"label": "Line Items",
+						"addLabel": "Add Line Item",
+						"minIterations": 1,
+						"maxIterations": 20
+					},
+					"components": [
+						{
+							"uuid": "comp-line-service",
+							"type": "dropDown",
+							"properties": {
+								"label": "Service",
+								"showLabel": true,
+								"width": "full",
+								"options": [
+									{
+										"label": "Web Design",
+										"value": "web-design",
+										"metadata": { "price": 2500 }
+									},
+									{
+										"label": "SEO Audit",
+										"value": "seo-audit",
+										"metadata": { "price": 800 }
+									},
+									{
+										"label": "Logo Design",
+										"value": "logo-design",
+										"metadata": { "price": 1200 }
+									},
+									{
+										"label": "Content Writing (per page)",
+										"value": "content-writing",
+										"metadata": { "price": 150 }
+									},
+									{
+										"label": "Social Media Setup",
+										"value": "social-media-setup",
+										"metadata": { "price": 600 }
+									},
+									{
+										"label": "Hosting (annual)",
+										"value": "hosting-annual",
+										"metadata": { "price": 300 }
+									},
+									{
+										"label": "Custom Development (per hour)",
+										"value": "custom-dev",
+										"metadata": { "price": 175 }
+									}
+								],
+								"validation": { "rules": [{ "type": "required" }] }
+							}
+						},
+						{
+							"uuid": "comp-line-qty",
+							"type": "inputNumber",
+							"properties": {
+								"label": "Qty",
+								"showLabel": true,
+								"width": "third",
+								"validation": {
+									"rules": [
+										{ "type": "required" },
+										{ "type": "minValue", "params": { "min": 1 } }
+									]
+								}
+							}
+						},
+						{
+							"uuid": "comp-line-unit-price",
+							"type": "computed",
+							"properties": {
+								"label": "Unit Price",
+								"showLabel": true,
+								"detail": "Auto-filled from selected service",
+								"formula": "{comp-line-service}.selectedOption.metadata.price",
+								"format": "currency",
+								"decimalPlaces": 2,
+								"currencySymbol": "$",
+								"width": "third"
+							}
+						},
+						{
+							"uuid": "comp-line-subtotal",
+							"type": "computed",
+							"properties": {
+								"label": "Subtotal",
+								"showLabel": true,
+								"formula": "{comp-line-service}.selectedOption.metadata.price * {comp-line-qty}",
+								"format": "currency",
+								"decimalPlaces": 2,
+								"currencySymbol": "$",
+								"width": "third"
+							}
+						}
+					]
+				},
+				{
+					"uuid": "comp-line-divider",
+					"type": "divider",
+					"properties": {}
+				},
+				{
+					"uuid": "comp-discount-pct",
+					"type": "inputNumber",
+					"properties": {
+						"label": "Discount %",
+						"showLabel": true,
+						"width": "third",
+						"helperText": "Optional discount applied to the grand total",
+						"validation": {
+							"rules": [
+								{ "type": "minValue", "params": { "min": 0 } },
+								{ "type": "maxValue", "params": { "max": 100 } }
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-discount-amount",
+					"type": "computed",
+					"properties": {
+						"label": "Discount Amount",
+						"showLabel": true,
+						"formula": "SUM({comp-line-subtotal}) * {comp-discount-pct} / 100",
+						"format": "currency",
+						"decimalPlaces": 2,
+						"currencySymbol": "$",
+						"width": "third"
+					}
+				},
+				{
+					"uuid": "comp-final-total",
+					"type": "computed",
+					"properties": {
+						"label": "Total After Discount",
+						"showLabel": true,
+						"detail": "Grand total minus any discount",
+						"formula": "SUM({comp-line-subtotal}) - SUM({comp-line-subtotal}) * {comp-discount-pct} / 100",
+						"format": "currency",
+						"decimalPlaces": 2,
+						"currencySymbol": "$",
+						"width": "third"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-notes",
+			"label": "Notes & Terms",
+			"components": [
+				{
+					"uuid": "comp-notes-header",
+					"type": "header",
+					"properties": {
+						"value": "Notes & Terms"
+					}
+				},
+				{
+					"uuid": "comp-payment-terms",
+					"type": "dropDown",
+					"properties": {
+						"label": "Payment Terms",
+						"showLabel": true,
+						"width": "half",
+						"options": [
+							{ "label": "Due on Receipt", "value": "due-on-receipt" },
+							{ "label": "Net 15", "value": "net-15" },
+							{ "label": "Net 30", "value": "net-30" },
+							{ "label": "Net 60", "value": "net-60" },
+							{ "label": "50% Upfront / 50% on Completion", "value": "50-50" }
+						],
+						"validation": { "rules": [{ "type": "required" }] }
+					}
+				},
+				{
+					"uuid": "comp-currency",
+					"type": "dropDown",
+					"properties": {
+						"label": "Currency",
+						"showLabel": true,
+						"width": "half",
+						"options": [
+							{ "label": "USD ($)", "value": "usd" },
+							{ "label": "EUR (\u20ac)", "value": "eur" },
+							{ "label": "GBP (\u00a3)", "value": "gbp" },
+							{ "label": "CAD (C$)", "value": "cad" }
+						],
+						"validation": { "rules": [{ "type": "required" }] }
+					}
+				},
+				{
+					"uuid": "comp-notes",
+					"type": "inputTextArea",
+					"properties": {
+						"label": "Notes to Client",
+						"showLabel": true,
+						"placeholder": "Any additional terms, scope clarifications, or notes..."
+					}
+				},
+				{
+					"uuid": "comp-include-tax",
+					"type": "yesNo",
+					"properties": {
+						"label": "Does this quote include tax?",
+						"showLabel": true,
+						"width": "half"
+					}
+				},
+				{
+					"uuid": "comp-tax-rate",
+					"type": "inputNumber",
+					"properties": {
+						"label": "Tax Rate %",
+						"showLabel": true,
+						"width": "half",
+						"helperText": "Applicable tax rate"
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-include-tax",
+									"operator": "isTrue",
+									"value": ""
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,859 @@
+{
+	"uuid": "flow-conditions-full-001",
+	"config": {
+		"theme": { "color": "#0d47a1" },
+		"summary": true
+	},
+	"metadata": {
+		"name": "Conditions — Full Operator Demo",
+		"description": "Demonstrates every condition operator category, AND/OR logic, and multi-rule conditions"
+	},
+	"screens": [
+		{
+			"uuid": "screen-boolean",
+			"label": "Boolean Operators",
+			"components": [
+				{
+					"uuid": "comp-header-bool",
+					"type": "header",
+					"properties": {
+						"value": "Boolean Operators"
+					}
+				},
+				{
+					"uuid": "comp-toggle",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "Enable notifications"
+					}
+				},
+				{
+					"uuid": "comp-show-on-true",
+					"type": "text",
+					"properties": {
+						"value": "[b]isTrue[/b] — This appears when the toggle is ON",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-toggle",
+									"operator": "isTrue"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-show-on-false",
+					"type": "text",
+					"properties": {
+						"value": "[b]isFalse[/b] — This appears when the toggle is OFF",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-toggle",
+									"operator": "isFalse"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-notification-email",
+					"type": "inputText",
+					"properties": {
+						"label": "Notification email",
+						"required": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-toggle",
+									"operator": "isTrue"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-string",
+			"label": "String Operators",
+			"components": [
+				{
+					"uuid": "comp-header-str",
+					"type": "header",
+					"properties": {
+						"value": "String Operators"
+					}
+				},
+				{
+					"uuid": "comp-text-input",
+					"type": "inputText",
+					"properties": {
+						"label": "Type something (try 'hello world')"
+					}
+				},
+				{
+					"uuid": "comp-equals",
+					"type": "text",
+					"properties": {
+						"value": "[b]equals[/b] — Exact match: typed 'hello world'",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-text-input",
+									"operator": "equals",
+									"value": "hello world"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-not-equals",
+					"type": "text",
+					"properties": {
+						"value": "[b]notEquals[/b] — You typed something other than 'hello world'",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-text-input",
+									"operator": "notEquals",
+									"value": "hello world"
+								},
+								{
+									"source": "comp-text-input",
+									"operator": "isNotEmpty"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-contains",
+					"type": "text",
+					"properties": {
+						"value": "[b]contains[/b] — Input contains 'hello'",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-text-input",
+									"operator": "contains",
+									"value": "hello"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-not-contains",
+					"type": "text",
+					"properties": {
+						"value": "[b]notContains[/b] — Input does NOT contain 'hello'",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-text-input",
+									"operator": "notContains",
+									"value": "hello"
+								},
+								{
+									"source": "comp-text-input",
+									"operator": "isNotEmpty"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-starts-with",
+					"type": "text",
+					"properties": {
+						"value": "[b]startsWith[/b] — Input starts with 'hello'",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-text-input",
+									"operator": "startsWith",
+									"value": "hello"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-ends-with",
+					"type": "text",
+					"properties": {
+						"value": "[b]endsWith[/b] — Input ends with 'world'",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-text-input",
+									"operator": "endsWith",
+									"value": "world"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-presence",
+			"label": "Presence Operators",
+			"components": [
+				{
+					"uuid": "comp-header-presence",
+					"type": "header",
+					"properties": {
+						"value": "Presence Operators"
+					}
+				},
+				{
+					"uuid": "comp-name-input",
+					"type": "inputText",
+					"properties": {
+						"label": "Your name"
+					}
+				},
+				{
+					"uuid": "comp-is-empty",
+					"type": "text",
+					"properties": {
+						"value": "[b]isEmpty[/b] — The name field is empty. Type something!",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-name-input",
+									"operator": "isEmpty"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-is-not-empty",
+					"type": "text",
+					"properties": {
+						"value": "[b]isNotEmpty[/b] — Thanks for entering your name!",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-name-input",
+									"operator": "isNotEmpty"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-numeric",
+			"label": "Numeric Operators",
+			"components": [
+				{
+					"uuid": "comp-header-num",
+					"type": "header",
+					"properties": {
+						"value": "Numeric Operators"
+					}
+				},
+				{
+					"uuid": "comp-age-input",
+					"type": "inputNumber",
+					"properties": {
+						"label": "Enter your age"
+					}
+				},
+				{
+					"uuid": "comp-gt",
+					"type": "text",
+					"properties": {
+						"value": "[b]greaterThan[/b] — Age is greater than 65 (senior)",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-age-input",
+									"operator": "greaterThan",
+									"value": 65
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-gte",
+					"type": "text",
+					"properties": {
+						"value": "[b]greaterThanOrEqual[/b] — Age is at least 18 (adult)",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-age-input",
+									"operator": "greaterThanOrEqual",
+									"value": 18
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-lt",
+					"type": "text",
+					"properties": {
+						"value": "[b]lessThan[/b] — Age is under 18 (minor)",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-age-input",
+									"operator": "lessThan",
+									"value": 18
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-lte",
+					"type": "text",
+					"properties": {
+						"value": "[b]lessThanOrEqual[/b] — Age is at most 12 (child)",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-age-input",
+									"operator": "lessThanOrEqual",
+									"value": 12
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-slider",
+					"type": "slider",
+					"properties": {
+						"label": "Satisfaction (0–100)",
+						"min": 0,
+						"max": 100,
+						"steps": 1
+					}
+				},
+				{
+					"uuid": "comp-slider-high",
+					"type": "text",
+					"properties": {
+						"value": "[b]greaterThanOrEqual + slider[/b] — Satisfaction is 80 or above!",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-slider",
+									"operator": "greaterThanOrEqual",
+									"value": 80
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-set-single",
+			"label": "Set Operators (Single)",
+			"components": [
+				{
+					"uuid": "comp-header-set",
+					"type": "header",
+					"properties": {
+						"value": "Set Operators — Single-Select"
+					}
+				},
+				{
+					"uuid": "comp-color-dropdown",
+					"type": "dropDown",
+					"properties": {
+						"label": "Favorite color",
+						"options": [
+							{ "label": "Red", "value": "red" },
+							{ "label": "Green", "value": "green" },
+							{ "label": "Blue", "value": "blue" },
+							{ "label": "Yellow", "value": "yellow" },
+							{ "label": "Purple", "value": "purple" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-is-one-of",
+					"type": "text",
+					"properties": {
+						"value": "[b]isOneOf[/b] — You picked a primary color (red, blue, or yellow)",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-color-dropdown",
+									"operator": "isOneOf",
+									"value": ["red", "blue", "yellow"]
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-is-not-one-of",
+					"type": "text",
+					"properties": {
+						"value": "[b]isNotOneOf[/b] — You picked a non-primary color (green or purple)",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-color-dropdown",
+									"operator": "isNotOneOf",
+									"value": ["red", "blue", "yellow"]
+								},
+								{
+									"source": "comp-color-dropdown",
+									"operator": "isNotEmpty"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-radio-source",
+					"type": "radio",
+					"properties": {
+						"label": "Preferred contact method",
+						"options": [
+							{ "label": "Email", "value": "email" },
+							{ "label": "Phone", "value": "phone" },
+							{ "label": "Mail", "value": "mail" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-radio-email",
+					"type": "inputText",
+					"properties": {
+						"label": "Email address",
+						"required": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-radio-source",
+									"operator": "equals",
+									"value": "email"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-radio-phone",
+					"type": "inputText",
+					"properties": {
+						"label": "Phone number",
+						"required": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-radio-source",
+									"operator": "equals",
+									"value": "phone"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-set-multi",
+			"label": "Set Operators (Multi)",
+			"components": [
+				{
+					"uuid": "comp-header-multi",
+					"type": "header",
+					"properties": {
+						"value": "Set Operators — Multi-Select"
+					}
+				},
+				{
+					"uuid": "comp-toppings",
+					"type": "dropDownMulti",
+					"properties": {
+						"label": "Pizza toppings",
+						"options": [
+							{ "label": "Pepperoni", "value": "pepperoni" },
+							{ "label": "Mushrooms", "value": "mushrooms" },
+							{ "label": "Onions", "value": "onions" },
+							{ "label": "Olives", "value": "olives" },
+							{ "label": "Pineapple", "value": "pineapple" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-includes-any",
+					"type": "text",
+					"properties": {
+						"value": "[b]includesAny[/b] — You selected at least one meat topping (pepperoni)",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-toppings",
+									"operator": "includesAny",
+									"value": ["pepperoni"]
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-includes-all",
+					"type": "text",
+					"properties": {
+						"value": "[b]includesAll[/b] — You selected both mushrooms AND olives",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-toppings",
+									"operator": "includesAll",
+									"value": ["mushrooms", "olives"]
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-includes-none",
+					"type": "text",
+					"properties": {
+						"value": "[b]includesNone[/b] — No pineapple — a person of culture!",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-toppings",
+									"operator": "includesNone",
+									"value": ["pineapple"]
+								},
+								{
+									"source": "comp-toppings",
+									"operator": "isNotEmpty"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-hide-action",
+			"label": "Hide Action",
+			"components": [
+				{
+					"uuid": "comp-header-hide",
+					"type": "header",
+					"properties": {
+						"value": "Hide Action (instead of Show)"
+					}
+				},
+				{
+					"uuid": "comp-dismiss-toggle",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "Dismiss warning"
+					}
+				},
+				{
+					"uuid": "comp-warning",
+					"type": "text",
+					"properties": {
+						"value": "[b]action: hide + isTrue[/b] — This warning disappears when you toggle 'Dismiss' on",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "hide",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-dismiss-toggle",
+									"operator": "isTrue"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-and-or",
+			"label": "AND / OR Logic",
+			"components": [
+				{
+					"uuid": "comp-header-logic",
+					"type": "header",
+					"properties": {
+						"value": "Multi-Rule Logic"
+					}
+				},
+				{
+					"uuid": "comp-country",
+					"type": "dropDown",
+					"properties": {
+						"label": "Country",
+						"options": [
+							{ "label": "United States", "value": "US" },
+							{ "label": "Canada", "value": "CA" },
+							{ "label": "United Kingdom", "value": "UK" },
+							{ "label": "Australia", "value": "AU" },
+							{ "label": "Other", "value": "other" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-age",
+					"type": "inputNumber",
+					"properties": {
+						"label": "Age"
+					}
+				},
+				{
+					"uuid": "comp-and-result",
+					"type": "text",
+					"properties": {
+						"value": "[b]AND logic[/b] — Country is US AND age is at least 21. You can drink in the US!",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-country",
+									"operator": "equals",
+									"value": "US"
+								},
+								{
+									"source": "comp-age",
+									"operator": "greaterThanOrEqual",
+									"value": 21
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-or-result",
+					"type": "text",
+					"properties": {
+						"value": "[b]OR logic[/b] — Country is US OR Canada (North America)",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "or",
+							"rules": [
+								{
+									"source": "comp-country",
+									"operator": "equals",
+									"value": "US"
+								},
+								{
+									"source": "comp-country",
+									"operator": "equals",
+									"value": "CA"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-agree-toggle",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "I agree to terms"
+					}
+				},
+				{
+					"uuid": "comp-and-three-rules",
+					"type": "text",
+					"properties": {
+						"value": "[b]AND — 3 rules[/b] — Country is US + age >= 18 + agreed to terms. All three met!",
+						"displayType": true
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-country",
+									"operator": "equals",
+									"value": "US"
+								},
+								{
+									"source": "comp-age",
+									"operator": "greaterThanOrEqual",
+									"value": 18
+								},
+								{
+									"source": "comp-agree-toggle",
+									"operator": "isTrue"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-conditional",
+			"label": "Conditional Screen",
+			"conditions": {
+				"action": "show",
+				"when": {
+					"logic": "and",
+					"rules": [
+						{
+							"source": "comp-agree-toggle",
+							"operator": "isTrue"
+						}
+					]
+				}
+			},
+			"components": [
+				{
+					"uuid": "comp-header-screen",
+					"type": "header",
+					"properties": {
+						"value": "Conditional Screen"
+					}
+				},
+				{
+					"uuid": "comp-screen-text",
+					"type": "text",
+					"properties": {
+						"value": "This entire screen only appears when 'I agree to terms' is toggled on in the previous screen. Screen-level conditions control navigation — this screen is skipped entirely when hidden.",
+						"displayType": true
+					}
+				}
+			]
+		}
+	]
+}

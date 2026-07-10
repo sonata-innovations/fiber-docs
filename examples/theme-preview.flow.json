@@ -1,0 +1,102 @@
+{
+	"uuid": "flow-theme-preview-001",
+	"config": {
+		"controls": { "show": true, "showStepper": false },
+		"summary": false
+	},
+	"metadata": {
+		"name": "Theme Preview",
+		"description": "A plain sample form for driving a live theme preview. Uses only FBTL-creatable elements and carries no baked-in theme — the host theme editor supplies the theme via props. Every control surfaces a themeable element (labels, input fills, borders, corners, accent on selection, and the error color on a required field)."
+	},
+	"screens": [
+		{
+			"uuid": "screen-preview",
+			"label": "Sample form",
+			"components": [
+				{
+					"uuid": "comp-heading",
+					"type": "header",
+					"properties": {
+						"value": "Sample form"
+					}
+				},
+				{
+					"uuid": "comp-subtitle",
+					"type": "text",
+					"properties": {
+						"value": "A live preview of your theme."
+					}
+				},
+				{
+					"uuid": "comp-name",
+					"type": "inputText",
+					"properties": {
+						"label": "Full name",
+						"placeholder": "Jane Doe",
+						"required": true
+					}
+				},
+				{
+					"uuid": "comp-email",
+					"type": "inputText",
+					"properties": {
+						"label": "Email address",
+						"placeholder": "jane@example.com"
+					}
+				},
+				{
+					"uuid": "comp-contact-method",
+					"type": "radio",
+					"properties": {
+						"label": "Preferred contact method",
+						"options": [
+							{ "label": "Email", "value": "email" },
+							{ "label": "Phone", "value": "phone" },
+							{ "label": "Text message", "value": "text" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-topics",
+					"type": "checkbox",
+					"properties": {
+						"label": "Topics you're interested in",
+						"options": [
+							{ "label": "Product updates", "value": "product" },
+							{ "label": "Tips & guides", "value": "tips" },
+							{ "label": "Events", "value": "events" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-referral",
+					"type": "dropDown",
+					"properties": {
+						"label": "How did you hear about us?",
+						"options": [
+							{ "label": "Search engine", "value": "search" },
+							{ "label": "Social media", "value": "social" },
+							{ "label": "A friend", "value": "friend" },
+							{ "label": "Other", "value": "other" }
+						]
+					}
+				},
+				{
+					"uuid": "comp-message",
+					"type": "inputTextArea",
+					"properties": {
+						"label": "Your message",
+						"placeholder": "Tell us a little more..."
+					}
+				},
+				{
+					"uuid": "comp-optin",
+					"type": "confirm",
+					"properties": {
+						"label": "I'd like to receive occasional updates by email."
+					}
+				}
+			]
+		}
+	]
+}

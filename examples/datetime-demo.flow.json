@@ -1,0 +1,140 @@
+{
+	"uuid": "demo-datetime-flow",
+	"metadata": {
+		"name": "Date/Time & New Components Demo",
+		"description": "Demonstrates all new date/time, yesNo, and colorPicker components."
+	},
+	"screens": [
+		{
+			"uuid": "screen-datetime",
+			"label": "Date & Time",
+			"components": [
+				{
+					"uuid": "comp-date",
+					"type": "date",
+					"properties": {
+						"label": "Appointment Date",
+						"placeholder": "Select a date...",
+						"showLabel": true
+					}
+				},
+				{
+					"uuid": "comp-time",
+					"type": "time",
+					"properties": {
+						"label": "Preferred Time",
+						"placeholder": "Select a time...",
+						"showLabel": true,
+						"step": 15,
+						"width": "half"
+					}
+				},
+				{
+					"uuid": "comp-datetime",
+					"type": "dateTime",
+					"properties": {
+						"label": "Event Start",
+						"placeholder": "Select date & time...",
+						"showLabel": true,
+						"step": 30,
+						"width": "half"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-ranges",
+			"label": "Ranges",
+			"components": [
+				{
+					"uuid": "comp-daterange",
+					"type": "dateRange",
+					"properties": {
+						"label": "Vacation Dates",
+						"placeholderStart": "Start date",
+						"placeholderEnd": "End date",
+						"showLabel": true
+					}
+				},
+				{
+					"uuid": "comp-timerange",
+					"type": "timeRange",
+					"properties": {
+						"label": "Business Hours",
+						"placeholderStart": "Open",
+						"placeholderEnd": "Close",
+						"showLabel": true,
+						"step": 30,
+						"width": "half"
+					}
+				},
+				{
+					"uuid": "comp-datetimerange",
+					"type": "dateTimeRange",
+					"properties": {
+						"label": "Conference Schedule",
+						"placeholderStart": "Start",
+						"placeholderEnd": "End",
+						"showLabel": true,
+						"step": 15,
+						"width": "half"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-other",
+			"label": "Other",
+			"components": [
+				{
+					"uuid": "comp-yesno",
+					"type": "yesNo",
+					"properties": {
+						"label": "Are you available?",
+						"showLabel": true,
+						"labelYes": "Yes",
+						"labelNo": "No",
+						"validation": {
+							"rules": [{ "type": "required" }]
+						}
+					}
+				},
+				{
+					"uuid": "comp-yesno-custom",
+					"type": "yesNo",
+					"properties": {
+						"label": "Do you agree to the terms?",
+						"showLabel": true,
+						"labelYes": "I Agree",
+						"labelNo": "Decline",
+						"width": "half"
+					}
+				},
+				{
+					"uuid": "comp-colorpicker",
+					"type": "colorPicker",
+					"properties": {
+						"label": "Brand Color",
+						"showLabel": true,
+						"defaultValue": "#1976d2",
+						"swatches": ["#f44336", "#e91e63", "#9c27b0", "#3f51b5", "#2196f3", "#00bcd4", "#4caf50", "#ff9800"],
+						"width": "half"
+					}
+				},
+				{
+					"uuid": "comp-inputtext-email",
+					"type": "inputText",
+					"properties": {
+						"label": "Email Address",
+						"placeholder": "name@example.com",
+						"inputType": "email",
+						"showLabel": true,
+						"validation": {
+							"rules": [{ "type": "email" }]
+						}
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,173 @@
+{
+	"uuid": "flow-file-upload-001",
+	"config": {
+		"theme": { "color": "#7b1fa2" },
+		"summary": true
+	},
+	"metadata": {
+		"name": "File Upload",
+		"description": "Upload your documents and photos for review."
+	},
+	"screens": [
+		{
+			"uuid": "screen-documents",
+			"label": "Documents",
+			"components": [
+				{
+					"uuid": "comp-doc-header",
+					"type": "header",
+					"properties": {
+						"value": "Document Upload"
+					}
+				},
+				{
+					"uuid": "comp-doc-instructions",
+					"type": "text",
+					"properties": {
+						"value": "Please upload the required documents below. Accepted formats vary by field — check the helper text for each upload.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-resume",
+					"type": "fileUpload",
+					"properties": {
+						"label": "Resume",
+						"required": true,
+						"accept": ".pdf,.doc,.docx",
+						"helperText": "PDF, DOC, or DOCX. Max 10MB.",
+						"maxSize": 10485760
+					}
+				},
+				{
+					"uuid": "comp-cover-letter",
+					"type": "fileUpload",
+					"properties": {
+						"label": "Cover Letter",
+						"accept": ".pdf,.doc,.docx",
+						"helperText": "Optional. PDF, DOC, or DOCX. Max 5MB.",
+						"maxSize": 5242880
+					}
+				},
+				{
+					"uuid": "comp-doc-details-group",
+					"type": "group",
+					"properties": {},
+					"components": [
+						{
+							"uuid": "comp-doc-title",
+							"type": "inputText",
+							"properties": {
+								"label": "Document Title",
+								"placeholder": "e.g. Application Package",
+								"width": "half"
+							}
+						},
+						{
+							"uuid": "comp-doc-category",
+							"type": "dropDown",
+							"properties": {
+								"label": "Document Category",
+								"options": [
+									{
+										"label": "Employment",
+										"value": "Employment"
+									},
+									{
+										"label": "Education",
+										"value": "Education"
+									},
+									{
+										"label": "Certification",
+										"value": "Certification"
+									},
+									{
+										"label": "Legal",
+										"value": "Legal"
+									},
+									{
+										"label": "Other",
+										"value": "Other"
+									}
+								],
+								"width": "half"
+							}
+						}
+					]
+				},
+				{
+					"uuid": "comp-supporting-doc",
+					"type": "fileUpload",
+					"properties": {
+						"label": "Supporting Document",
+						"helperText": "Optional. Any file type. Max 20MB.",
+						"maxSize": 20971520
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-images",
+			"label": "Images & Verification",
+			"components": [
+				{
+					"uuid": "comp-photos-divider",
+					"type": "divider",
+					"properties": {
+						"value": "Photo Uploads",
+						"textAlign": "center",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-profile-photo",
+					"type": "fileUpload",
+					"properties": {
+						"label": "Profile Photo",
+						"required": true,
+						"accept": ".jpg,.png,.webp",
+						"helperText": "JPG, PNG, or WebP. Max 5MB.",
+						"maxSize": 5242880
+					}
+				},
+				{
+					"uuid": "comp-verify-toggle",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "I want to verify my identity"
+					}
+				},
+				{
+					"uuid": "comp-id-scan",
+					"type": "fileUpload",
+					"properties": {
+						"label": "ID Scan",
+						"accept": ".pdf,.jpg,.png",
+						"helperText": "PDF, JPG, or PNG. Max 10MB.",
+						"maxSize": 10485760
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-verify-toggle",
+									"operator": "isTrue"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-additional-notes",
+					"type": "inputTextArea",
+					"properties": {
+						"label": "Additional Notes",
+						"placeholder": "Any additional information about your uploads..."
+					}
+				}
+			]
+		}
+	]
+}

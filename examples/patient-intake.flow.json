@@ -1,0 +1,422 @@
+{
+	"uuid": "flow-patient-intake-001",
+	"config": {
+		"theme": { "color": "#1976d2" },
+		"summary": true
+	},
+	"metadata": {
+		"name": "Patient Intake Form",
+		"description": "Please complete all sections before your appointment."
+	},
+	"screens": [
+		{
+			"uuid": "screen-personal-info",
+			"label": "Personal Information",
+			"components": [
+				{
+					"uuid": "comp-intro-text",
+					"type": "text",
+					"properties": {
+						"value": "Please provide your [b]personal details[/b] below. All fields marked with * are required.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-full-name",
+					"type": "inputText",
+					"properties": {
+						"label": "Full Name",
+						"required": true,
+						"placeholder": "Enter your full name",
+						"helperText": "As it appears on your ID"
+					}
+				},
+				{
+					"uuid": "comp-contact-group",
+					"type": "group",
+					"properties": {},
+					"components": [
+						{
+							"uuid": "comp-email",
+							"type": "inputText",
+							"properties": {
+								"label": "Email",
+								"required": true,
+								"placeholder": "you@example.com",
+								"helperText": "We'll send appointment confirmations here",
+								"regex": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+								"width": "half"
+							}
+						},
+						{
+							"uuid": "comp-phone",
+							"type": "inputText",
+							"properties": {
+								"label": "Phone",
+								"placeholder": "555-123-4567",
+								"startAdornment": "+1",
+								"tooltip": "Include area code. We may call for scheduling changes.",
+								"width": "half"
+							}
+						}
+					]
+				},
+				{
+					"uuid": "comp-demo-group",
+					"type": "group",
+					"properties": {},
+					"components": [
+						{
+							"uuid": "comp-age",
+							"type": "inputNumber",
+							"properties": {
+								"label": "Age",
+								"required": true,
+								"placeholder": "0",
+								"width": "half"
+							}
+						},
+						{
+							"uuid": "comp-gender",
+							"type": "radio",
+							"properties": {
+								"label": "Gender",
+								"required": true,
+								"options": [
+									{
+										"label": "Male",
+										"value": "Male"
+									},
+									{
+										"label": "Female",
+										"value": "Female"
+									},
+									{
+										"label": "Other",
+										"value": "Other"
+									}
+								],
+								"width": "half"
+							}
+						}
+					]
+				},
+				{
+					"uuid": "comp-text-notify",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "Receive text message reminders"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-medical-history",
+			"label": "Medical History",
+			"components": [
+				{
+					"uuid": "comp-symptoms-divider",
+					"type": "divider",
+					"properties": {
+						"value": "Current Symptoms",
+						"textAlign": "center",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-symptoms",
+					"type": "checkbox",
+					"properties": {
+						"label": "Current Symptoms",
+						"required": true,
+						"helperText": "Select all that apply",
+						"options": [
+							{
+								"label": "Headache",
+								"value": "Headache"
+							},
+							{
+								"label": "Fever",
+								"value": "Fever"
+							},
+							{
+								"label": "Nausea",
+								"value": "Nausea"
+							},
+							{
+								"label": "Fatigue",
+								"value": "Fatigue"
+							},
+							{
+								"label": "Cough",
+								"value": "Cough"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-pain-scale",
+					"type": "slider",
+					"properties": {
+						"label": "Pain Scale",
+						"required": true,
+						"min": 0,
+						"max": 10,
+						"steps": 1,
+						"marks": true,
+						"initValue": 0
+					}
+				},
+				{
+					"uuid": "comp-allergies",
+					"type": "dropDownMulti",
+					"properties": {
+						"label": "Known Allergies",
+						"helperText": "Select all that apply",
+						"options": [
+							{
+								"label": "Penicillin",
+								"value": "Penicillin"
+							},
+							{
+								"label": "Sulfa Drugs",
+								"value": "Sulfa Drugs"
+							},
+							{
+								"label": "Latex",
+								"value": "Latex"
+							},
+							{
+								"label": "Aspirin",
+								"value": "Aspirin"
+							},
+							{
+								"label": "Iodine",
+								"value": "Iodine"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-medications",
+					"type": "group",
+					"properties": {
+						"label": "Medication",
+						"showLabel": true,
+						"collapsible": true,
+						"repeatable": true
+					},
+					"components": [
+						{
+							"uuid": "comp-med-name",
+							"type": "inputText",
+							"properties": {
+								"label": "Medication Name",
+								"placeholder": "e.g. Ibuprofen",
+								"width": "half"
+							}
+						},
+						{
+							"uuid": "comp-med-dosage",
+							"type": "inputText",
+							"properties": {
+								"label": "Dosage",
+								"placeholder": "e.g. 200mg daily",
+								"width": "half"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"uuid": "screen-insurance",
+			"label": "Insurance & Payment",
+			"components": [
+				{
+					"uuid": "comp-insurance-provider",
+					"type": "dropDown",
+					"properties": {
+						"label": "Insurance Provider",
+						"required": true,
+						"helperText": "Choose your primary insurance",
+						"options": [
+							{
+								"label": "Aetna",
+								"value": "Aetna"
+							},
+							{
+								"label": "Blue Cross Blue Shield",
+								"value": "BCBS"
+							},
+							{
+								"label": "Cigna",
+								"value": "Cigna"
+							},
+							{
+								"label": "UnitedHealthcare",
+								"value": "United"
+							},
+							{
+								"label": "No Insurance / Self-Pay",
+								"value": "None"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-policy-number",
+					"type": "inputText",
+					"properties": {
+						"label": "Policy Number",
+						"placeholder": "e.g. ABC123456"
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-insurance-provider",
+									"operator": "notEquals",
+									"value": "None"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-insurance-card",
+					"type": "fileUpload",
+					"properties": {
+						"label": "Upload Insurance Card",
+						"accept": ".pdf,.jpg,.png",
+						"helperText": "PDF, JPG, or PNG. Max 5MB.",
+						"maxSize": 5242880
+					},
+					"conditions": {
+						"action": "show",
+						"when": {
+							"logic": "and",
+							"rules": [
+								{
+									"source": "comp-insurance-provider",
+									"operator": "notEquals",
+									"value": "None"
+								}
+							]
+						}
+					}
+				},
+				{
+					"uuid": "comp-copay",
+					"type": "inputNumber",
+					"properties": {
+						"label": "Expected Co-pay Amount",
+						"placeholder": "0.00",
+						"startAdornment": "$",
+						"decimalPlaces": 2,
+						"helperText": "Enter amount in USD"
+					}
+				},
+				{
+					"uuid": "comp-satisfaction",
+					"type": "rating",
+					"properties": {
+						"label": "Rate your previous visit experience",
+						"max": 5,
+						"precision": 0.5
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-additional",
+			"label": "Additional Information",
+			"components": [
+				{
+					"uuid": "comp-notes",
+					"type": "inputTextArea",
+					"properties": {
+						"label": "Additional Notes",
+						"placeholder": "Describe any additional symptoms, concerns, or questions you have for your provider...",
+						"helperText": "Optional — include anything your doctor should know"
+					}
+				},
+				{
+					"uuid": "comp-referral",
+					"type": "dropDown",
+					"properties": {
+						"label": "How did you hear about us?",
+						"options": [
+							{
+								"label": "Doctor Referral",
+								"value": "Doctor Referral"
+							},
+							{
+								"label": "Online Search",
+								"value": "Online Search"
+							},
+							{
+								"label": "Friend or Family",
+								"value": "Friend/Family"
+							},
+							{
+								"label": "Insurance Directory",
+								"value": "Insurance Directory"
+							},
+							{
+								"label": "Other",
+								"value": "Other"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-address",
+					"type": "group",
+					"properties": {
+						"label": "Home Address",
+						"showLabel": true,
+						"collapsible": true
+					},
+					"components": [
+						{
+							"uuid": "comp-street",
+							"type": "inputText",
+							"properties": {
+								"label": "Street Address",
+								"placeholder": "123 Main St"
+							}
+						},
+						{
+							"uuid": "comp-city",
+							"type": "inputText",
+							"properties": {
+								"label": "City",
+								"placeholder": "City",
+								"width": "half"
+							}
+						},
+						{
+							"uuid": "comp-zip",
+							"type": "inputText",
+							"properties": {
+								"label": "ZIP Code",
+								"placeholder": "00000",
+								"width": "half"
+							}
+						}
+					]
+				},
+				{
+					"uuid": "comp-consent",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "I confirm that the information provided is accurate"
+					}
+				}
+			]
+		}
+	]
+}

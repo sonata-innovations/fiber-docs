@@ -1,0 +1,265 @@
+{
+	"uuid": "flow-lead-generation-001",
+	"config": {
+		"theme": { "color": "#2e7d32" },
+		"summary": true
+	},
+	"metadata": {
+		"name": "Lead Generation",
+		"description": "Tell us about your business needs and we'll get back to you."
+	},
+	"screens": [
+		{
+			"uuid": "screen-contact-details",
+			"label": "Contact Details",
+			"components": [
+				{
+					"uuid": "comp-lead-header",
+					"type": "header",
+					"properties": {
+						"value": "Get Started"
+					}
+				},
+				{
+					"uuid": "comp-lead-intro",
+					"type": "text",
+					"properties": {
+						"value": "Fill out the form below and a member of our team will reach out to discuss how we can help.",
+						"displayType": true
+					}
+				},
+				{
+					"uuid": "comp-name-group",
+					"type": "group",
+					"properties": {},
+					"components": [
+						{
+							"uuid": "comp-first-name",
+							"type": "inputText",
+							"properties": {
+								"label": "First Name",
+								"required": true,
+								"placeholder": "First name",
+								"width": "half"
+							}
+						},
+						{
+							"uuid": "comp-last-name",
+							"type": "inputText",
+							"properties": {
+								"label": "Last Name",
+								"required": true,
+								"placeholder": "Last name",
+								"width": "half"
+							}
+						}
+					]
+				},
+				{
+					"uuid": "comp-lead-email",
+					"type": "inputText",
+					"properties": {
+						"label": "Email",
+						"required": true,
+						"placeholder": "you@company.com",
+						"regex": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+					}
+				},
+				{
+					"uuid": "comp-lead-phone",
+					"type": "inputText",
+					"properties": {
+						"label": "Phone",
+						"placeholder": "555-123-4567",
+						"startAdornment": "+1"
+					}
+				},
+				{
+					"uuid": "comp-company-name",
+					"type": "inputText",
+					"properties": {
+						"label": "Company Name",
+						"required": true,
+						"placeholder": "Your company"
+					}
+				},
+				{
+					"uuid": "comp-job-title",
+					"type": "inputText",
+					"properties": {
+						"label": "Job Title",
+						"placeholder": "e.g. Marketing Director"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "screen-interest-budget",
+			"label": "Interest & Budget",
+			"components": [
+				{
+					"uuid": "comp-industry",
+					"type": "dropDown",
+					"properties": {
+						"label": "Industry",
+						"required": true,
+						"options": [
+							{
+								"label": "Technology",
+								"value": "Technology"
+							},
+							{
+								"label": "Healthcare",
+								"value": "Healthcare"
+							},
+							{
+								"label": "Finance",
+								"value": "Finance"
+							},
+							{
+								"label": "Retail",
+								"value": "Retail"
+							},
+							{
+								"label": "Education",
+								"value": "Education"
+							},
+							{
+								"label": "Other",
+								"value": "Other"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-interest-areas",
+					"type": "checkbox",
+					"properties": {
+						"label": "Areas of Interest",
+						"helperText": "Select all that apply",
+						"options": [
+							{
+								"label": "Product Demo",
+								"value": "Product Demo"
+							},
+							{
+								"label": "Pricing Info",
+								"value": "Pricing Info"
+							},
+							{
+								"label": "Technical Support",
+								"value": "Technical Support"
+							},
+							{
+								"label": "Partnership",
+								"value": "Partnership"
+							},
+							{
+								"label": "Custom Solution",
+								"value": "Custom Solution"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-company-size",
+					"type": "dropDown",
+					"properties": {
+						"label": "Company Size",
+						"options": [
+							{
+								"label": "1-10",
+								"value": "1-10"
+							},
+							{
+								"label": "11-50",
+								"value": "11-50"
+							},
+							{
+								"label": "51-200",
+								"value": "51-200"
+							},
+							{
+								"label": "201-500",
+								"value": "201-500"
+							},
+							{
+								"label": "500+",
+								"value": "500+"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-budget-range",
+					"type": "radio",
+					"properties": {
+						"label": "Budget Range",
+						"options": [
+							{
+								"label": "$0 – $5k",
+								"value": "0-5k"
+							},
+							{
+								"label": "$5k – $25k",
+								"value": "5k-25k"
+							},
+							{
+								"label": "$25k – $100k",
+								"value": "25k-100k"
+							},
+							{
+								"label": "$100k+",
+								"value": "100k+"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-timeline",
+					"type": "dropDown",
+					"properties": {
+						"label": "Timeline",
+						"options": [
+							{
+								"label": "Immediately",
+								"value": "Immediately"
+							},
+							{
+								"label": "1-3 months",
+								"value": "1-3 months"
+							},
+							{
+								"label": "3-6 months",
+								"value": "3-6 months"
+							},
+							{
+								"label": "6+ months",
+								"value": "6+ months"
+							},
+							{
+								"label": "Just exploring",
+								"value": "Just exploring"
+							}
+						]
+					}
+				},
+				{
+					"uuid": "comp-project-description",
+					"type": "inputTextArea",
+					"properties": {
+						"label": "Tell us about your project",
+						"placeholder": "Describe your goals, challenges, or what you're looking for..."
+					}
+				},
+				{
+					"uuid": "comp-newsletter",
+					"type": "toggleSwitch",
+					"properties": {
+						"label": "Subscribe to newsletter"
+					}
+				}
+			]
+		}
+	]
+}
