@@ -75,6 +75,7 @@ import {
   FBTProvider, FBTDndZone, FBTPool, FBTStage,
   FBTEditor, FBTScreenBar, FBTToolbar,
   FBTPreviewPanel, FBTPreviewFloat, FBTHelpModal,
+  FBTConfirmDeleteDialog,
 } from "@sonata-innovations/fiber-fbt";
 import "@sonata-innovations/fiber-fbt/styles";
 
@@ -91,6 +92,7 @@ function CustomBuilder() {
         <FBTPreviewFloat />
       </FBTDndZone>
       <FBTHelpModal />
+      <FBTConfirmDeleteDialog />
     </FBTProvider>
   );
 }
@@ -108,10 +110,11 @@ function CustomBuilder() {
 | `FBTPreviewPanel` | Live FBRE preview (inline) | No |
 | `FBTPreviewFloat` | Floating preview overlay | No |
 | `FBTHelpModal` | Keyboard shortcuts modal | No |
+| `FBTConfirmDeleteDialog` | Confirmation prompt shown when deleting a component other conditions depend on | No |
 | `FBTDndZone` | Drag-and-drop context wrapper | — |
 | `FBTDefaultLayout` | The standard 3-column layout (used by `<FBT />`) | No — it renders its **own** `FBTDndZone`; do not nest it inside another one |
 
-> **Composable-layout gap (known issue).** `FBTDefaultLayout` renders a delete-confirmation dialog internally, but that dialog component is not exported from the package index. In a fully custom layout, deleting a component that other components' conditions depend on sets a pending-deletion state and waits for a confirmation dialog you cannot render — the delete appears to hang. Until this is fixed, avoid condition-dependent deletes in custom layouts or clear the dependent conditions first.
+> **Render `FBTConfirmDeleteDialog` in custom layouts.** Deleting a component that other components' conditions depend on sets a pending-deletion state and waits for confirmation. `FBTDefaultLayout` renders the dialog for you; a fully custom layout must render it somewhere inside `FBTProvider`, or those deletes will appear to hang.
 
 ## Custom Presets & Templates
 
@@ -159,7 +162,7 @@ const myTemplates: AnyTemplateDefinition[] = [
 <FBT customPresets={myPresets} customTemplates={myTemplates} />
 ```
 
-> **Collision warning.** There is no required prefix for custom `type` strings, but built-in lookup runs **before** the custom map — a custom definition whose `type` collides with a built-in key (e.g. `preset-phone`, `template-signUp`) is silently shadowed and never used. Pick a distinct namespace such as `custom-*` (which is also what the Fiber server enforces for stored definitions).
+> **Collision warning.** There is no required prefix for custom `type` strings, but built-in lookup runs **before** the custom map — a custom definition whose `type` collides with a built-in key is shadowed by the built-in and never used. FBT logs a `console.warn` at registration when it detects such a collision, but it does not rename or override for you. Pick a distinct namespace such as `custom-*` (which is also what the Fiber server enforces for stored definitions).
 
 Whether a definition is treated as a preset or a template is determined by **which prop array it arrives in**, not by its `type` string. A template drop **merges** — it appends the template's screens to the current flow (nothing is replaced) and focuses the first appended screen.
 
@@ -227,8 +230,9 @@ function App() {
 **MUST:**
 - Import styles separately (`import "@sonata-innovations/fiber-fbt/styles"`) — styles are not bundled with the JS
 - Wrap `FBTPool` and `FBTStage` in `<FBTDndZone>` when using composable layout
+- Render `<FBTConfirmDeleteDialog />` inside `FBTProvider` when using composable layout — without it, deleting a condition-dependent component hangs on a prompt that never appears
 
 **DO NOT:**
 - Use the `useFBTStore` hook outside `FBTProvider` — it requires context
 - Access `storeRef.current` before the provider has mounted — it will be `null`
-- Echo `onFlowChange` output back into the `flow` prop — any new `flow` reference re-runs the internal load. Unlike FBTL (≥ 2.1.2), FBT has **no content-identity guard**, so a round-tripping parent (save → re-fetch → set `flow`) reloads the builder and can loop. Treat `flow` as *initial* state; after mount, drive changes through the builder UI or `storeRef` actions
+- Key long-lived UI to builder state across a `flow` prop change expecting it to survive — a new `flow` reference whose content **differs** from the current builder state re-runs the internal load and resets selection/undo. Echoing `onFlowChange` output straight back into `flow` is safe: FBT now has a content-identity guard (like FBTL ≥ 2.1.2) that treats a content-identical reload as a no-op, so a round-tripping parent (save → re-fetch → set `flow`) no longer loops. Still treat `flow` as *initial* state and drive post-mount changes through the builder UI or `storeRef` actions

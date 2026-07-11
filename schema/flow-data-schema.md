@@ -108,7 +108,7 @@ container.components = [
 
 Display-only children (`header`, `text`, `divider`, `callout`, `table`) inside containers are excluded, just like at the screen level. Children hidden by conditions within an iteration are also excluded.
 
-> **Known limitation:** a `group` nested inside a repeater iteration currently does **not** have its own children emitted in FlowData — the nested group appears as a `ComponentData` entry without a `components` array. Only the top-level container's children are expanded. This is a known issue in the assembly code; document consumers should not rely on nested-container children until it is fixed.
+Nesting is expanded recursively: a `group` nested inside a repeater iteration carries its own `components` 2D array, following the same shape as a top-level container.
 
 ---
 
@@ -127,10 +127,8 @@ Inline Base64-encoded file. This is the wire format FBRE actually emits — the 
 | `type` | `string` | Yes | MIME type (e.g. `"application/pdf"`, `"image/png"`) |
 | `size` | `number` | Yes | File size in bytes |
 | `lastModified` | `number` | Yes | Last modified timestamp (Unix milliseconds) |
-| `lastModifiedDate` | `string` | No | Legacy `File.lastModifiedDate` value, passed through only when the browser provides it (deprecated File API property) |
+| `lastModifiedDate` | `string` | No | Legacy `File.lastModifiedDate` as an ISO-8601 string, emitted only when the browser provides the property (deprecated File API) |
 | `data` | `string` | Yes | Base64-encoded file content (data URL format) |
-
-> **Type/wire mismatch:** the TypeScript type `FileUploadBase64Data` in `fiber-types` currently misspells this optional field as `lastModifiedData` (required, `string`). That is a typo in the type — nothing named `lastModifiedData` ever appears on the wire. A fix is pending; this document describes the actual emitted shape.
 
 ### FileUploadS3Data
 
@@ -192,7 +190,7 @@ FlowData is assembled from the runtime state when the form is completed. The fol
 - **Screen order preserved** — Screens appear in the same order as the flow definition (minus hidden ones).
 - **Component order preserved** — Components appear in the same order as they were defined on each screen.
 - **Calculations included when present** — If the flow defines calculations (`flow.calculations`), the `calculations` array is included with each calculation's UUID, label, evaluated value, and (when the value is non-null) a pre-formatted display string. Omitted entirely when the flow has no calculations.
-- **Nested-container limitation** — A `group` nested inside a repeater iteration does not have its children expanded (see [Container Components](#container-components-group-and-repeater)).
+- **Nested containers expand recursively** — A `group` nested inside a repeater iteration carries its own `components` 2D array (see [Container Components](#container-components-group-and-repeater)).
 
 ---
 

@@ -46,7 +46,8 @@ function App() {
 | `context` | `Record<string, string \| boolean \| number>` | No | — | External context for context conditions (reactive — updates trigger re-evaluation) |
 | `storeRef` | `MutableRefObject<StoreApi<FBREStoreState> \| null>` | No | — | Exposes Zustand store for imperative access |
 | `onScreenChange` | `(index: number, data: any) => void` | No | — | Called on screen navigation; at runtime `data` is the current `FlowData` (declared `any`) |
-| `onScreenValidationChange` | `(index: number, data: any) => void` | No | — | **Known issue: currently never invoked.** The prop is accepted but not wired up — do not rely on it; poll `getScreenValidity` via `storeRef` instead |
+
+> **Watching screen validity.** There is no validity callback prop. Subscribe through `storeRef` instead — `storeRef.current.subscribe(...)` and read `getScreenValidity(index)`, or select `screenValidity` directly. (An `onScreenValidationChange` prop was accepted but never invoked in any released version; it has been removed.)
 
 Config group props (`theme`, `navigation`, `controls`) are shallow-merged over the corresponding `flow.config` group. JSX prop values take precedence.
 
@@ -80,7 +81,6 @@ Remote mode fetches the flow from a Fiber API server. Pass `flowId` and `apiEndp
 | `onFlowComplete` | `(data: FlowData) => void \| ConfirmationResult \| Promise<void \| ConfirmationResult>` | Yes | — | Called on completion. See [Confirmation Screen](#confirmation-screen) |
 | `context` | `Record<string, string \| boolean \| number>` | No | — | External context for context conditions (reactive) |
 | `onScreenChange` | `(index: number, data: any) => void` | No | — | Called on screen navigation; `data` is the current `FlowData` at runtime |
-| `onScreenValidationChange` | `(index: number, data: any) => void` | No | — | **Known issue: currently never invoked** (see local-mode table) |
 
 ## Server-Driven Mode
 
@@ -109,7 +109,7 @@ Server-driven mode delegates all logic (conditions, validation, screen transitio
 
 In server-driven mode, the `context` is sent to the server in the `POST /public/sessions` request body and stored on the session. The server uses it to evaluate cross-screen context conditions, and it is returned in each screen payload so the client can evaluate intra-screen context conditions locally.
 
-Two server-driven caveats: the [confirmation screen](#confirmation-screen) is not rendered in this mode, and after a successful completion the built-in UI remains in its "Submitting…" state — the parent is expected to unmount or replace the component from its `onFlowComplete` handler.
+On a successful completion, server-driven mode resets the submit button and renders a terminal [confirmation screen](#confirmation-screen) — the flow's configured `config.confirmation` message when present, otherwise a generic "Thank you". `onFlowComplete` still fires with the server result, so a parent that wants its own post-completion UI can unmount or replace the component from that handler.
 
 ## Conversational Mode
 
@@ -139,7 +139,7 @@ Conversational mode vertically centers content, auto-advances after single-selec
 
 ## Confirmation Screen
 
-A terminal "thank you" screen shown after the flow is submitted. It is a flow-level setting (`config.confirmation`), not a `Screen`, so it is never edited in the builder's stage editor. The config-driven screen renders only when `show` is not `false` **and** `title` or `body` has content; when shown, it replaces the final screen and hides the navigation controls/stepper. Note two edge cases: a non-empty `ConfirmationResult` returned from `onFlowComplete` forces the confirmation to render **even when `config.confirmation.show` is `false`**, and the confirmation screen does not exist in server-driven mode (the session just completes; render your own terminal state).
+A terminal "thank you" screen shown after the flow is submitted. It is a flow-level setting (`config.confirmation`), not a `Screen`, so it is never edited in the builder's stage editor. The config-driven screen renders only when `show` is not `false` **and** `title` or `body` has content; when shown, it replaces the final screen and hides the navigation controls/stepper. Note two edge cases: a non-empty `ConfirmationResult` returned from `onFlowComplete` forces the confirmation to render **even when `config.confirmation.show` is `false`**. Server-driven mode renders a terminal confirmation too, but drives it from `config.confirmation` only (it does not honor a `ConfirmationResult` return, since `onFlowComplete` there receives the raw server result); when no confirmation is configured it falls back to a generic "Thank you".
 
 ```tsx
 const flow = {
@@ -232,7 +232,7 @@ if (api) {
 | `getScreenValidity` | `(index: number) => boolean` | Check if a screen passes validation |
 | `evaluateFlowValidation` | `() => boolean` | Validate entire flow, returns `true` if all valid |
 | `getScreenByIndex` | `(index: number) => FlowScreen \| null` | Get screen by position |
-| `getMaxScreenCount` | `() => number` | **Returns the maximum screen index** (`screen count − 1`), despite the name; does not filter condition-hidden screens. The last screen is index `getMaxScreenCount()` |
+| `getMaxScreenIndex` | `() => number` | Returns the maximum screen **index** (`screen count − 1`); does not filter condition-hidden screens. The last screen is index `getMaxScreenIndex()` |
 | `getValidationErrors` | `(uuid: string) => string[]` | Get validation errors for a component |
 | `getCalculationResult` | `(uuid: string) => number \| null` | Result of a flow calculation by uuid |
 | `updateComponentValue` | `(uuid: string, value: any) => void` | Programmatically set a component's value |
@@ -324,8 +324,8 @@ function ExternalNav() {
     const store = storeRef.current?.getState();
     if (!store) return;
     if (store.getScreenValidity(screen)) {
-      // getMaxScreenCount() returns the max screen INDEX (count - 1), so no further adjustment
-      setScreen((s) => Math.min(s + 1, store.getMaxScreenCount()));
+      // getMaxScreenIndex() returns the last screen's index (count - 1)
+      setScreen((s) => Math.min(s + 1, store.getMaxScreenIndex()));
     }
   };
 

@@ -169,7 +169,7 @@
         },
         "lastModifiedDate": {
           "type": "string",
-          "description": "Deprecated File API 'lastModifiedDate' value, present only when the browser provides it."
+          "description": "Deprecated File API 'lastModifiedDate' value as an ISO-8601 string, present only when the browser provides the property."
         },
         "data": {
           "type": "string",

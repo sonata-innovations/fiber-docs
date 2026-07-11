@@ -511,7 +511,8 @@ function App() {
 | `context` | `Record<string, string \| boolean \| number>` | No | — | External context for context conditions (reactive — updates trigger re-evaluation) |
 | `storeRef` | `MutableRefObject<StoreApi<FBREStoreState> \| null>` | No | — | Exposes Zustand store for imperative access |
 | `onScreenChange` | `(index: number, data: any) => void` | No | — | Called on screen navigation; at runtime `data` is the current `FlowData` (declared `any`) |
-| `onScreenValidationChange` | `(index: number, data: any) => void` | No | — | **Known issue: currently never invoked.** The prop is accepted but not wired up — do not rely on it; poll `getScreenValidity` via `storeRef` instead |
+
+> **Watching screen validity.** There is no validity callback prop. Subscribe through `storeRef` instead — `storeRef.current.subscribe(...)` and read `getScreenValidity(index)`, or select `screenValidity` directly. (An `onScreenValidationChange` prop was accepted but never invoked in any released version; it has been removed.)
 
 Config group props (`theme`, `navigation`, `controls`) are shallow-merged over the corresponding `flow.config` group. JSX prop values take precedence.
 
@@ -545,7 +546,6 @@ Remote mode fetches the flow from a Fiber API server. Pass `flowId` and `apiEndp
 | `onFlowComplete` | `(data: FlowData) => void \| ConfirmationResult \| Promise<void \| ConfirmationResult>` | Yes | — | Called on completion. See [Confirmation Screen](#confirmation-screen) |
 | `context` | `Record<string, string \| boolean \| number>` | No | — | External context for context conditions (reactive) |
 | `onScreenChange` | `(index: number, data: any) => void` | No | — | Called on screen navigation; `data` is the current `FlowData` at runtime |
-| `onScreenValidationChange` | `(index: number, data: any) => void` | No | — | **Known issue: currently never invoked** (see local-mode table) |
 
 ## Server-Driven Mode
 
@@ -574,7 +574,7 @@ Server-driven mode delegates all logic (conditions, validation, screen transitio
 
 In server-driven mode, the `context` is sent to the server in the `POST /public/sessions` request body and stored on the session. The server uses it to evaluate cross-screen context conditions, and it is returned in each screen payload so the client can evaluate intra-screen context conditions locally.
 
-Two server-driven caveats: the [confirmation screen](#confirmation-screen) is not rendered in this mode, and after a successful completion the built-in UI remains in its "Submitting…" state — the parent is expected to unmount or replace the component from its `onFlowComplete` handler.
+On a successful completion, server-driven mode resets the submit button and renders a terminal [confirmation screen](#confirmation-screen) — the flow's configured `config.confirmation` message when present, otherwise a generic "Thank you". `onFlowComplete` still fires with the server result, so a parent that wants its own post-completion UI can unmount or replace the component from that handler.
 
 ## Conversational Mode
 
@@ -604,7 +604,7 @@ Conversational mode vertically centers content, auto-advances after single-selec
 
 ## Confirmation Screen
 
-A terminal "thank you" screen shown after the flow is submitted. It is a flow-level setting (`config.confirmation`), not a `Screen`, so it is never edited in the builder's stage editor. The config-driven screen renders only when `show` is not `false` **and** `title` or `body` has content; when shown, it replaces the final screen and hides the navigation controls/stepper. Note two edge cases: a non-empty `ConfirmationResult` returned from `onFlowComplete` forces the confirmation to render **even when `config.confirmation.show` is `false`**, and the confirmation screen does not exist in server-driven mode (the session just completes; render your own terminal state).
+A terminal "thank you" screen shown after the flow is submitted. It is a flow-level setting (`config.confirmation`), not a `Screen`, so it is never edited in the builder's stage editor. The config-driven screen renders only when `show` is not `false` **and** `title` or `body` has content; when shown, it replaces the final screen and hides the navigation controls/stepper. Note two edge cases: a non-empty `ConfirmationResult` returned from `onFlowComplete` forces the confirmation to render **even when `config.confirmation.show` is `false`**. Server-driven mode renders a terminal confirmation too, but drives it from `config.confirmation` only (it does not honor a `ConfirmationResult` return, since `onFlowComplete` there receives the raw server result); when no confirmation is configured it falls back to a generic "Thank you".
 
 ```tsx
 const flow = {
@@ -697,7 +697,7 @@ if (api) {
 | `getScreenValidity` | `(index: number) => boolean` | Check if a screen passes validation |
 | `evaluateFlowValidation` | `() => boolean` | Validate entire flow, returns `true` if all valid |
 | `getScreenByIndex` | `(index: number) => FlowScreen \| null` | Get screen by position |
-| `getMaxScreenCount` | `() => number` | **Returns the maximum screen index** (`screen count − 1`), despite the name; does not filter condition-hidden screens. The last screen is index `getMaxScreenCount()` |
+| `getMaxScreenIndex` | `() => number` | Returns the maximum screen **index** (`screen count − 1`); does not filter condition-hidden screens. The last screen is index `getMaxScreenIndex()` |
 | `getValidationErrors` | `(uuid: string) => string[]` | Get validation errors for a component |
 | `getCalculationResult` | `(uuid: string) => number \| null` | Result of a flow calculation by uuid |
 | `updateComponentValue` | `(uuid: string, value: any) => void` | Programmatically set a component's value |
@@ -789,8 +789,8 @@ function ExternalNav() {
     const store = storeRef.current?.getState();
     if (!store) return;
     if (store.getScreenValidity(screen)) {
-      // getMaxScreenCount() returns the max screen INDEX (count - 1), so no further adjustment
-      setScreen((s) => Math.min(s + 1, store.getMaxScreenCount()));
+      // getMaxScreenIndex() returns the last screen's index (count - 1)
+      setScreen((s) => Math.min(s + 1, store.getMaxScreenIndex()));
     }
   };
 
@@ -927,6 +927,7 @@ import {
   FBTProvider, FBTDndZone, FBTPool, FBTStage,
   FBTEditor, FBTScreenBar, FBTToolbar,
   FBTPreviewPanel, FBTPreviewFloat, FBTHelpModal,
+  FBTConfirmDeleteDialog,
 } from "@sonata-innovations/fiber-fbt";
 import "@sonata-innovations/fiber-fbt/styles";
 
@@ -943,6 +944,7 @@ function CustomBuilder() {
         <FBTPreviewFloat />
       </FBTDndZone>
       <FBTHelpModal />
+      <FBTConfirmDeleteDialog />
     </FBTProvider>
   );
 }
@@ -960,10 +962,11 @@ function CustomBuilder() {
 | `FBTPreviewPanel` | Live FBRE preview (inline) | No |
 | `FBTPreviewFloat` | Floating preview overlay | No |
 | `FBTHelpModal` | Keyboard shortcuts modal | No |
+| `FBTConfirmDeleteDialog` | Confirmation prompt shown when deleting a component other conditions depend on | No |
 | `FBTDndZone` | Drag-and-drop context wrapper | — |
 | `FBTDefaultLayout` | The standard 3-column layout (used by `<FBT />`) | No — it renders its **own** `FBTDndZone`; do not nest it inside another one |
 
-> **Composable-layout gap (known issue).** `FBTDefaultLayout` renders a delete-confirmation dialog internally, but that dialog component is not exported from the package index. In a fully custom layout, deleting a component that other components' conditions depend on sets a pending-deletion state and waits for a confirmation dialog you cannot render — the delete appears to hang. Until this is fixed, avoid condition-dependent deletes in custom layouts or clear the dependent conditions first.
+> **Render `FBTConfirmDeleteDialog` in custom layouts.** Deleting a component that other components' conditions depend on sets a pending-deletion state and waits for confirmation. `FBTDefaultLayout` renders the dialog for you; a fully custom layout must render it somewhere inside `FBTProvider`, or those deletes will appear to hang.
 
 ## Custom Presets & Templates
 
@@ -1011,7 +1014,7 @@ const myTemplates: AnyTemplateDefinition[] = [
 <FBT customPresets={myPresets} customTemplates={myTemplates} />
 ```
 
-> **Collision warning.** There is no required prefix for custom `type` strings, but built-in lookup runs **before** the custom map — a custom definition whose `type` collides with a built-in key (e.g. `preset-phone`, `template-signUp`) is silently shadowed and never used. Pick a distinct namespace such as `custom-*` (which is also what the Fiber server enforces for stored definitions).
+> **Collision warning.** There is no required prefix for custom `type` strings, but built-in lookup runs **before** the custom map — a custom definition whose `type` collides with a built-in key is shadowed by the built-in and never used. FBT logs a `console.warn` at registration when it detects such a collision, but it does not rename or override for you. Pick a distinct namespace such as `custom-*` (which is also what the Fiber server enforces for stored definitions).
 
 Whether a definition is treated as a preset or a template is determined by **which prop array it arrives in**, not by its `type` string. A template drop **merges** — it appends the template's screens to the current flow (nothing is replaced) and focuses the first appended screen.
 
@@ -1079,11 +1082,12 @@ function App() {
 **MUST:**
 - Import styles separately (`import "@sonata-innovations/fiber-fbt/styles"`) — styles are not bundled with the JS
 - Wrap `FBTPool` and `FBTStage` in `<FBTDndZone>` when using composable layout
+- Render `<FBTConfirmDeleteDialog />` inside `FBTProvider` when using composable layout — without it, deleting a condition-dependent component hangs on a prompt that never appears
 
 **DO NOT:**
 - Use the `useFBTStore` hook outside `FBTProvider` — it requires context
 - Access `storeRef.current` before the provider has mounted — it will be `null`
-- Echo `onFlowChange` output back into the `flow` prop — any new `flow` reference re-runs the internal load. Unlike FBTL (≥ 2.1.2), FBT has **no content-identity guard**, so a round-tripping parent (save → re-fetch → set `flow`) reloads the builder and can loop. Treat `flow` as *initial* state; after mount, drive changes through the builder UI or `storeRef` actions
+- Key long-lived UI to builder state across a `flow` prop change expecting it to survive — a new `flow` reference whose content **differs** from the current builder state re-runs the internal load and resets selection/undo. Echoing `onFlowChange` output straight back into `flow` is safe: FBT now has a content-identity guard (like FBTL ≥ 2.1.2) that treats a content-identical reload as a no-op, so a round-tripping parent (save → re-fetch → set `flow`) no longer loops. Still treat `flow` as *initial* state and drive post-mount changes through the builder UI or `storeRef` actions
 
 
 ==============================================================================
@@ -1132,7 +1136,6 @@ FBTL is a **controlled** component. The parent always owns `flow` state; FBTL fi
 | `ctaPosition` | `"top" \| "bottom"` | No | `"bottom"` | Where the add-question CTA row renders |
 | `stickyCta` | `boolean` | No | `true` | Keep the CTA row pinned while scrolling |
 | `className` | `string` | No | — | Applied to the root container |
-| `metadata` | `FlowMetadata` | No | — | **Currently inert** — typed but ignored at runtime; the UI reads metadata from `flow.metadata` |
 | `locale` | `string` | No | — | i18n locale (reserved; not yet used) |
 
 **`<FBTLProvider />` — for composable layouts.** It does **not** take the full `<FBTL />` prop set — only:
@@ -1767,7 +1770,7 @@ container.components = [
 
 Display-only children (`header`, `text`, `divider`, `callout`, `table`) inside containers are excluded, just like at the screen level. Children hidden by conditions within an iteration are also excluded.
 
-> **Known limitation:** a `group` nested inside a repeater iteration currently does **not** have its own children emitted in FlowData — the nested group appears as a `ComponentData` entry without a `components` array. Only the top-level container's children are expanded. This is a known issue in the assembly code; document consumers should not rely on nested-container children until it is fixed.
+Nesting is expanded recursively: a `group` nested inside a repeater iteration carries its own `components` 2D array, following the same shape as a top-level container.
 
 ---
 
@@ -1786,10 +1789,8 @@ Inline Base64-encoded file. This is the wire format FBRE actually emits — the 
 | `type` | `string` | Yes | MIME type (e.g. `"application/pdf"`, `"image/png"`) |
 | `size` | `number` | Yes | File size in bytes |
 | `lastModified` | `number` | Yes | Last modified timestamp (Unix milliseconds) |
-| `lastModifiedDate` | `string` | No | Legacy `File.lastModifiedDate` value, passed through only when the browser provides it (deprecated File API property) |
+| `lastModifiedDate` | `string` | No | Legacy `File.lastModifiedDate` as an ISO-8601 string, emitted only when the browser provides the property (deprecated File API) |
 | `data` | `string` | Yes | Base64-encoded file content (data URL format) |
-
-> **Type/wire mismatch:** the TypeScript type `FileUploadBase64Data` in `fiber-types` currently misspells this optional field as `lastModifiedData` (required, `string`). That is a typo in the type — nothing named `lastModifiedData` ever appears on the wire. A fix is pending; this document describes the actual emitted shape.
 
 ### FileUploadS3Data
 
@@ -1851,7 +1852,7 @@ FlowData is assembled from the runtime state when the form is completed. The fol
 - **Screen order preserved** — Screens appear in the same order as the flow definition (minus hidden ones).
 - **Component order preserved** — Components appear in the same order as they were defined on each screen.
 - **Calculations included when present** — If the flow defines calculations (`flow.calculations`), the `calculations` array is included with each calculation's UUID, label, evaluated value, and (when the value is non-null) a pre-formatted display string. Omitted entirely when the flow has no calculations.
-- **Nested-container limitation** — A `group` nested inside a repeater iteration does not have its children expanded (see [Container Components](#container-components-group-and-repeater)).
+- **Nested containers expand recursively** — A `group` nested inside a repeater iteration carries its own `components` 2D array (see [Container Components](#container-components-group-and-repeater)).
 
 ---
 

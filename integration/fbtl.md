@@ -45,7 +45,6 @@ FBTL is a **controlled** component. The parent always owns `flow` state; FBTL fi
 | `ctaPosition` | `"top" \| "bottom"` | No | `"bottom"` | Where the add-question CTA row renders |
 | `stickyCta` | `boolean` | No | `true` | Keep the CTA row pinned while scrolling |
 | `className` | `string` | No | — | Applied to the root container |
-| `metadata` | `FlowMetadata` | No | — | **Currently inert** — typed but ignored at runtime; the UI reads metadata from `flow.metadata` |
 | `locale` | `string` | No | — | i18n locale (reserved; not yet used) |
 
 **`<FBTLProvider />` — for composable layouts.** It does **not** take the full `<FBTL />` prop set — only:
