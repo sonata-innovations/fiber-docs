@@ -250,7 +250,7 @@
           ]
         },
         "properties": {
-          "description": "Type-specific properties. JSON schema is the open ComponentProperties shape below; TypeScript narrows it per-type via the variant map in fiber-types/src/component-variants.ts.",
+          "description": "Type-specific properties. JSON schema is the open ComponentProperties shape below; TypeScript narrows it per-type via the variant map in types/src/component-variants.ts.",
           "$ref": "#/$defs/ComponentProperties"
         },
         "conditions": { "$ref": "#/$defs/FlowConditionConfig" },

@@ -2,9 +2,11 @@
 title: Fiber Concepts
 applies-to:
   - "@sonata-innovations/fiber-types@^2.2"
+  - "@sonata-innovations/fiber-shared@^1.0"
   - "@sonata-innovations/fiber-fbre@^3.3"
   - "@sonata-innovations/fiber-fbt@^2.2"
   - "@sonata-innovations/fiber-fbtl@^2.2"
+  - "@sonata-innovations/fiber-theme-editor@^1.0"
 read-when: "First contact with Fiber: the Flow/Screen/Component model, FlowData, builders vs render engine, conditions/validation/calculations concepts."
 ---
 
